@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "988831027356",
+    "project_id": "qjumpa-7f679",
+    "storage_bucket": "qjumpa-7f679.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:988831027356:android:c55dd58d52f8d145eedd59",
+        "android_client_info": {
+          "package_name": "com.example.qjumpa"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC1_wA_UxawQ1dpg5k3kl4Nsp90qVGKJM8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
