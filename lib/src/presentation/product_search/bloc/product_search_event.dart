@@ -9,10 +9,11 @@ abstract class ProductSearchEvent extends Equatable {
 
 class Search extends ProductSearchEvent {
   final String query;
-  final List<Inventory>? inventory;
+  final String storeId;
+  final List<Inventory> inventory;
 
-  const Search(this.query, this.inventory);
+  const Search(this.query, this.storeId, this.inventory);
 
   @override
-  List<Object> get props => [query];
+  List<Object> get props => [query, storeId, inventory];
 }

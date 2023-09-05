@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qjumpa/injection.dart';
-import 'package:qjumpa/src/data/preferences/item_shared_preferences.dart';
+import 'package:qjumpa/src/data/local_storage/item_shared_preferences.dart';
 import 'package:qjumpa/src/domain/entity/shopping_list_entity.dart';
 
 class CollapsibleContainer extends StatefulWidget {

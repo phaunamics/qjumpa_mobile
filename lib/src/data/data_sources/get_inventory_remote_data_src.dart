@@ -3,7 +3,7 @@ import 'package:qjumpa/src/core/dio_client.dart';
 import 'package:qjumpa/src/domain/entity/store_inventory.dart';
 
 abstract class GetInventoryRemoteDataSource {
-  Future<List<Inventory>> getStoreInventory();
+  Future<List<Inventory>> getStoreInventory(String id);
 }
 
 class GetInventoryRemoteDataSourceImpl implements GetInventoryRemoteDataSource {
@@ -11,8 +11,8 @@ class GetInventoryRemoteDataSourceImpl implements GetInventoryRemoteDataSource {
 
   GetInventoryRemoteDataSourceImpl({required this.dioClient});
   @override
-  Future<List<Inventory>> getStoreInventory() async {
-    final response = await dioClient.get(inventoryEndpoint);
+  Future<List<Inventory>> getStoreInventory(String id) async {
+    final response = await dioClient.get(inventoryEndpoint(id));
 
     if (response['data'] == null) return [];
     return List.from(response['data'])

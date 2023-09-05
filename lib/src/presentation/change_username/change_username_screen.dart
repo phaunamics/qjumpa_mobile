@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qjumpa/src/presentation/widgets/custom_textformfield.dart';
-import 'package:qjumpa/src/presentation/widgets/doodle_background.dart';
-import 'package:qjumpa/src/presentation/widgets/small_btn.dart';
+import 'package:qjumpa/src/presentation/widgets/small_button.dart';
 
 class ChangeUserNameScreen extends StatefulWidget {
   static const routeName = '/changeusername';
@@ -21,7 +20,6 @@ class _ChangeUserNameScreenState extends State<ChangeUserNameScreen> {
 
     return Scaffold(
         body: Stack(children: [
-      const DoodleBackground(),
       Positioned(
         top: screenHeight / 10,
         child: SizedBox(
@@ -50,7 +48,7 @@ class _ChangeUserNameScreenState extends State<ChangeUserNameScreen> {
                 ),
                 CustomTextFormField(
                   controller: _oldUsernameController,
-                  hint: '@teenata',
+                  hint: 'username',
                   label: 'Current Username',
                   value: false,
                   suffixIcon: null,

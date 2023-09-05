@@ -2,7 +2,7 @@ import 'package:badges/badges.dart' as badges;
 import 'package:flutter/material.dart';
 import 'package:qjumpa/src/core/constants.dart';
 import 'package:qjumpa/src/core/hex_converter.dart';
-import 'package:qjumpa/src/presentation/cart/cart.dart';
+import 'package:qjumpa/src/presentation/shopping_cart/cart.dart';
 
 class CustomBadge extends StatelessWidget {
   final int badgeCount;

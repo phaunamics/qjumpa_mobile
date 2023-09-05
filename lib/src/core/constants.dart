@@ -1,10 +1,13 @@
-const primaryColor = '#0F2F2E';
+const primaryColor = '#284B63';
 const fontColor = '#7E7E7E';
 const ctnColor = '#D4EFDF';
+const tabColor = '#64C0F0';
 const selectedColor = '#58FFFA';
 const counterColor = '#05172C';
-const String inventoryEndpoint =
-    'https://qjumpa-production.up.railway.app/api/products';
+String inventoryEndpoint(String storeId) =>
+    'https://62f0-2603-8001-b102-35ba-8494-d05d-a15c-a221.ngrok-free.app/api/users/$storeId/products';
+const String storeEndPoint =
+    'https://62f0-2603-8001-b102-35ba-8494-d05d-a15c-a221.ngrok-free.app/api/users';
 const String initialTransactionUrl =
     'https://api.paystack.co/transaction/initialize';
 String verifyTransactionUrl(String reference) =>

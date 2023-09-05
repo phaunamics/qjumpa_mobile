@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:qjumpa/injection.dart' as di;
 import 'package:qjumpa/injection.dart';
 import 'package:qjumpa/routes.dart';
-import 'package:qjumpa/src/presentation/splash/splash_screen.dart';
+import 'package:qjumpa/src/presentation/splash_screen/splash_screen.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();

@@ -32,7 +32,7 @@ class Inventory {
       this.photo,
       this.lastPurchasedAt,
       this.createdAt,
-    this.updatedAt});
+      this.updatedAt});
 
   Inventory.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -60,5 +60,10 @@ class Inventory {
     data['created_at'] = createdAt ?? '';
     data['updated_at'] = updatedAt;
     return data;
+  }
+
+  @override
+  String toString() {
+    return 'Inventory{id: $id,name: $name,price: $price,sku: $sku,stock: $stock}';
   }
 }

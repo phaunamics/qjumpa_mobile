@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:qjumpa/src/core/constants.dart';
 import 'package:qjumpa/src/core/hex_converter.dart';
-import 'package:qjumpa/src/presentation/widgets/doodle_background.dart';
-import 'package:qjumpa/src/presentation/widgets/small_btn.dart';
+import 'package:qjumpa/src/presentation/widgets/small_button.dart';
 
 class OTPScreen extends StatelessWidget {
   static const routeName = '/otp';
@@ -16,7 +15,6 @@ class OTPScreen extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          const DoodleBackground(),
           Positioned(
             top: screenHeight / 6,
             child: SizedBox(

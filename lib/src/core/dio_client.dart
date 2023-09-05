@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:qjumpa/src/domain/entity/exception.dart';
 import 'package:qjumpa/src/domain/entity/paystack_response.dart';
 import 'package:qjumpa/src/domain/entity/secret_key.dart';
 
@@ -25,12 +26,34 @@ class DioClient {
   //   dio.interceptors.add(MockInterceptor());
   // }
 
+  // Future<Map<String, dynamic>> get(String endPoint) async {
+  //   try {
+  //     final response = await dio.get(endPoint);
+  //     // print('status code is ${response.statusCode}');
+  //     return response.data;
+  //   } on DioError catch (err) {
+  //     throw ('The error is $err');
+  //   }
+  // }
+
   Future<Map<String, dynamic>> get(String endPoint) async {
     try {
       final response = await dio.get(endPoint);
-      return response.data;
+      if (response.statusCode == 200) {
+        return response.data;
+      } else {
+        throw ServerError(
+          message: 'Server returned error status: ${response.statusCode}',
+        );
+      }
     } on DioError catch (err) {
-      throw ('The error is $err');
+      if (err.type == DioErrorType.connectionError ||
+          err.type == DioErrorType.sendTimeout ||
+          err.type == DioErrorType.receiveTimeout) {
+        throw NoInternetException(message: 'No internet connection');
+      } else {
+        throw ServerError(message: 'An error occurred: ${err.message}');
+      }
     }
   }
 

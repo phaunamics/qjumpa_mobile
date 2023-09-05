@@ -8,7 +8,7 @@ class InventoryImpl implements InventoryRepository {
   InventoryImpl(this.getInventoryRemoteDataSource);
 
   @override
-  Future<List<Inventory>> getInventory() {
-    return getInventoryRemoteDataSource.getStoreInventory();
+  Future<List<Inventory>> getInventory(String storeId) {
+    return getInventoryRemoteDataSource.getStoreInventory(storeId);
   }
 }

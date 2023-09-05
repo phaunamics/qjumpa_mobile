@@ -1,21 +1,25 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:qjumpa/injection.dart';
-import 'package:qjumpa/src/data/preferences/cart_shared_preferences.dart';
+import 'package:qjumpa/src/core/constants.dart';
+import 'package:qjumpa/src/core/hex_converter.dart';
+import 'package:qjumpa/src/data/local_storage/cart_shared_preferences.dart';
+import 'package:qjumpa/src/domain/entity/arguments.dart';
 import 'package:qjumpa/src/domain/entity/order_entity.dart';
-import 'package:qjumpa/src/domain/entity/store_inventory.dart';
-import 'package:qjumpa/src/presentation/product_search/product_search_screen.dart';
-import 'package:qjumpa/src/presentation/widgets/bottom_nav/bottom_nav_bar.dart';
-import 'package:qjumpa/src/presentation/widgets/bottom_nav_icon.dart';
+import 'package:qjumpa/src/presentation/product_scan/bloc/barcodescanner_bloc.dart';
+import 'package:qjumpa/src/presentation/product_search/product_search_screen_.dart';
 import 'package:qjumpa/src/presentation/widgets/custom_badge.dart';
-import 'package:qjumpa/src/presentation/widgets/doodle_background.dart';
-import 'package:qjumpa/src/presentation/widgets/inventory_animated_container.dart';
+import 'package:qjumpa/src/presentation/widgets/ios_scanner_view.dart';
+import 'package:qjumpa/src/presentation/widgets/large_button.dart';
+import 'package:qjumpa/src/presentation/widgets/search_result_card.dart';
 
 class ProductScanScreen extends StatefulWidget {
   static const routeName = '/productscan';
-  final Inventory inventory;
+  final Arguments arguments;
 
-  const ProductScanScreen({super.key, required this.inventory});
+  const ProductScanScreen({super.key, required this.arguments});
 
   @override
   State<ProductScanScreen> createState() => _ProductScanScreenState();
@@ -23,40 +27,65 @@ class ProductScanScreen extends StatefulWidget {
 
 class _ProductScanScreenState extends State<ProductScanScreen> {
   final _cartSharedPref = sl.get<CartSharedPreferences>();
+  final getBarcodeScannerbloc = sl.get<BarcodeScannerBloc>();
+
+  void performPlatformSpecificBarcodeScan() {
+    if (Platform.isAndroid) {
+      getBarcodeScannerbloc
+          .add(Scan(widget.arguments.storeEntity!.id.toString()));
+    } else if (Platform.isIOS) {
+      Navigator.pushNamed(context, IOSScannerView.routeName);
+    } else {
+      // Perform default action if the platform is not recognized
+      // print('Platform not recognized');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     var screenWidth = MediaQuery.of(context).size.width;
     var screenHeight = MediaQuery.of(context).size.height;
-    return Scaffold(
-      body: productScanView(
-          screenHeight: screenHeight,
-          context: context,
-          screenWidth: screenWidth),
-      floatingActionButton: Padding(
-        padding: EdgeInsets.only(bottom: screenHeight / 54.0),
-        child: BottomNavBar(
-          screenHeight: screenHeight,
-          screenWidth: screenWidth,
-          widget: BottomNavIcon(
-            value: 'Scan',
-            onTap: null,
-            widget: SvgPicture.asset('assets/scan_icon.svg'),
-          ),
-        ),
+    return BlocListener<BarcodeScannerBloc, BarcodescannerState>(
+      bloc: getBarcodeScannerbloc,
+      listener: (context, state) {
+        if (state is BarcodescannerCompleted) {
+          Navigator.pushReplacementNamed(
+            context,
+            ProductScanScreen.routeName,
+            arguments: Arguments(
+                inventory: state.inventory,
+                storeEntity: widget.arguments.storeEntity),
+          );
+        }
+      },
+      child: Scaffold(
+        body: productScanView(
+            screenHeight: screenHeight,
+            context: context,
+            screenWidth: screenWidth),
+        // floatingActionButton: Padding(
+        //   padding: EdgeInsets.only(bottom: screenHeight / 54.0),
+        //   child: BottomNavBar(
+        //     pages: const [],
+        //     customWidget: BottomNavIcon(
+        //       iconName: 'Scan',
+        //       onTap: performPlatformSpecificBarcodeScan,
+        //       widget: SvgPicture.asset('assets/scan_icon.svg'),
+        //     ),
+        //   ),
+        // ),
+        // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 
-  Stack productScanView(
+  Widget productScanView(
       {required double screenHeight,
       required BuildContext context,
       required double screenWidth,
       Order? order}) {
     return Stack(
       children: [
-        const DoodleBackground(),
         Positioned(
           top: screenHeight / 15,
           child: SizedBox(
@@ -81,65 +110,80 @@ class _ProductScanScreenState extends State<ProductScanScreen> {
                       )
                     ],
                   ),
+
+                  // Container(
+                  //   height: screenHeight / 9,
+                  //   width: screenHeight / 2,
+                  //   decoration: const BoxDecoration(
+                  //     color: Colors.white,
+                  //     image: DecorationImage(
+                  //         image: AssetImage('assets/barcode.jpeg'),
+                  //         fit: BoxFit.cover),
+                  //   ),
+                  // ),
+                  // SizedBox(
+                  //   height: screenHeight / 27,
+                  // ),
+                  // Center(
+                  //   child: Text(
+                  //     widget.arguments.inventory.sku!,
+                  //     style: const TextStyle(
+                  //         fontSize: 20, fontWeight: FontWeight.w600),
+                  //   ),
+                  // ),
+
                   SizedBox(
-                    height: screenHeight / 20,
-                  ),
-                  Container(
-                    height: screenHeight / 9,
-                    width: screenHeight / 2,
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      image: DecorationImage(
-                          image: AssetImage('assets/barcode.jpeg'),
-                          fit: BoxFit.cover),
-                    ),
-                  ),
-                  SizedBox(
-                    height: screenHeight / 27,
-                  ),
-                  Center(
-                    child: Text(
-                      widget.inventory.sku!,
-                      style: const TextStyle(
-                          fontSize: 20, fontWeight: FontWeight.w600),
-                    ),
-                  ),
-                  SizedBox(
-                    height: screenHeight / 76,
+                    height: screenHeight / 36,
                   ),
                   Row(
                     children: [
                       Expanded(
-                        child: CustomAnimatedContainer(
-                          order: widget.inventory.order,
+                        child: SearchResultCard(
+                          order: widget.arguments.inventory.order,
                         ),
                       ),
                     ],
                   ),
                   SizedBox(
-                    height: screenHeight / 34,
+                    height: screenHeight / 19,
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        'Barcode issues?',
+                  Center(
+                    child: LargeBtn(
+                      onTap: performPlatformSpecificBarcodeScan,
+                      text: 'Keep scanning',
+                      color: HexColor(primaryColor),
+                    ),
+                  ),
+                  SizedBox(
+                    height: screenHeight / 23,
+                  ),
+                  Center(
+                    child: Text(
+                      'Having trouble scanning?',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                        color: HexColor(fontColor),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: screenHeight / 54,
+                  ),
+                  Center(
+                    child: GestureDetector(
+                      onTap: () => Navigator.pushReplacementNamed(
+                          context, ProductSearchScreen.routeName,
+                          arguments: widget.arguments.storeEntity),
+                      child: Text(
+                        'Manually search ',
                         style: TextStyle(
-                            fontSize: 13, fontWeight: FontWeight.w500),
-                      ),
-                      const SizedBox(
-                        width: 4,
-                      ),
-                      GestureDetector(
-                        onTap: () => Navigator.pushNamed(
-                            context, ProductSearchScreen.routeName),
-                        child: const Text(
-                          'Add Item',
-                          style: TextStyle(
-                              fontSize: 13, fontWeight: FontWeight.w800),
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          color: HexColor(primaryColor),
                         ),
-                      )
-                    ],
+                      ),
+                    ),
                   ),
                 ],
               ),

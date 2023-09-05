@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:qjumpa/injection.dart';
 import 'package:qjumpa/src/core/constants.dart';
+import 'package:qjumpa/src/core/firebase_auth.dart';
 import 'package:qjumpa/src/core/hex_converter.dart';
-import 'package:qjumpa/src/data/preferences/item_shared_preferences.dart';
+import 'package:qjumpa/src/data/local_storage/item_shared_preferences.dart';
 import 'package:qjumpa/src/presentation/profile/profile_screen.dart';
 import 'package:qjumpa/src/presentation/shopping_list/create_new_list.dart';
-import 'package:qjumpa/src/presentation/store_search/store_search_screen.dart';
-import 'package:qjumpa/src/presentation/widgets/bottom_nav/bottom_nav_bar.dart';
-import 'package:qjumpa/src/presentation/widgets/bottom_nav_icon.dart';
 import 'package:qjumpa/src/presentation/widgets/collapsible_container.dart';
-import 'package:qjumpa/src/presentation/widgets/doodle_background.dart';
 
 class ShoppingList extends StatefulWidget {
   static const routeName = '/shopping_list';
@@ -19,23 +16,20 @@ class ShoppingList extends StatefulWidget {
   State<ShoppingList> createState() => _ShoppingListState();
 }
 
-bool isShopIcon = false;
-
 class _ShoppingListState extends State<ShoppingList> {
   final shoppingListSharedPref = sl.get<ShoppingListSharedPreferences>();
+  final _auth = sl.get<Auth>();
 
   @override
   Widget build(BuildContext context) {
     var screenHeight = MediaQuery.of(context).size.height;
-    var screenWidth = MediaQuery.of(context).size.width;
-
     return Scaffold(
       body: Stack(
         children: [
-          const DoodleBackground(),
           Positioned(
             top: screenHeight / 15,
-            child: SizedBox(
+            child: Container(
+              color: Colors.white,
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
               child: Padding(
@@ -48,60 +42,29 @@ class _ShoppingListState extends State<ShoppingList> {
                       children: [
                         customText(
                             text: 'Shopping List',
-                            fontSize: 20,
-                            fontWeight: FontWeight.w700),
-                        GestureDetector(
-                            onTap: () => Navigator.pushNamed(
-                                context, ProfileScreen.routeName),
-                            child: CircleAvatar(
-                              backgroundColor: HexColor(primaryColor),
-                              radius: screenHeight / 50,
-                              child: const Icon(
-                                Icons.person,
-                                color: Colors.white,
-                              ),
-                            )),
+                            fontSize: 24,
+                            fontWeight: FontWeight.w500),
                       ],
                     ),
                     SizedBox(
-                      height: screenHeight / 100,
-                    ),
-                    // Row(
-                    //   children: [
-                    //     customText(
-                    //       text: 'for ',
-                    //       fontWeight: FontWeight.w700,
-                    //     ),
-                    //     GestureDetector(
-                    //       onTap: () => Navigator.pushNamed(
-                    //           context, ProfileScreen.routeName),
-                    //       child: customText(
-                    //         text: '@tententa >>',
-                    //         color: HexColor(primaryColor),
-                    //         decoration: TextDecoration.underline,
-                    //         fontWeight: FontWeight.w700,
-                    //       ),
-                    //     ),
-                    //   ],
-                    // ),
-                    SizedBox(
-                      height: screenHeight / 86,
-                    ),
-                    customText(
-                      text: 'Having trouble creating a list?',
-                      color: HexColor(fontColor),
+                      height: screenHeight / 104,
                     ),
                     Row(
                       children: [
                         customText(
-                            text: 'Explore lists', color: HexColor(fontColor)),
+                            text: 'by ',
+                            fontWeight: FontWeight.w400,
+                            color: Colors.black.withOpacity(0.5)),
                         GestureDetector(
-                          onTap: null,
+                          onTap: () => Navigator.pushNamed(
+                              context, ProfileScreen.routeName),
                           child: customText(
-                            text: ' here>>',
-                            color: HexColor(primaryColor),
+                            text:
+                                '@${_auth.currentUser?.email?.split('@')[0]} >>',
+                            color: Colors.black,
+                            fontSize: 15,
                             decoration: TextDecoration.underline,
-                            fontWeight: FontWeight.w700,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       ],
@@ -143,28 +106,27 @@ class _ShoppingListState extends State<ShoppingList> {
                     SizedBox(
                       height: screenHeight / 32,
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        BottomNavBar(
-                          screenHeight: screenHeight,
-                          screenWidth: screenWidth,
-                          widget: BottomNavIcon(
-                            value: 'Shop',
-                            onTap: () {
-                              Navigator.pushReplacementNamed(
-                                  context, StoreSearchScreen.routeName);
-                              isShoppingListClicked = false;
-                            },
-                            widget: const Icon(
-                              Icons.shopping_cart_checkout_outlined,
-                              color: Colors.white,
-                              size: 27,
-                            ),
-                          ),
-                        ),
-                      ],
-                    )
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.center,
+                    //   children: [
+                    //     BottomNavBar(
+                    //       screenHeight: screenHeight,
+                    //       screenWidth: screenWidth,
+                    //       widget: BottomNavIcon(
+                    //         value: 'Shop',
+                    //         onTap: () {
+                    //           Navigator.pushReplacementNamed(
+                    //               context, StoreSearchScreen.routeName);
+                    //         },
+                    //         widget: const Icon(
+                    //           Icons.shopping_cart_checkout_outlined,
+                    //           color: Colors.white,
+                    //           size: 27,
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ],
+                    // )
                   ],
                 ),
               ),

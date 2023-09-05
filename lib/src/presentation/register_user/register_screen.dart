@@ -1,7 +1,6 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:qjumpa/injection.dart';
 import 'package:qjumpa/src/core/constants.dart';
 import 'package:qjumpa/src/core/firebase_auth.dart';
@@ -9,8 +8,7 @@ import 'package:qjumpa/src/core/hex_converter.dart';
 import 'package:qjumpa/src/presentation/login/login.dart';
 import 'package:qjumpa/src/presentation/verification/email_verification.dart';
 import 'package:qjumpa/src/presentation/widgets/custom_textformfield.dart';
-import 'package:qjumpa/src/presentation/widgets/doodle_background.dart';
-import 'package:qjumpa/src/presentation/widgets/large_btn.dart';
+import 'package:qjumpa/src/presentation/widgets/large_button.dart';
 
 class RegisterScreen extends StatefulWidget {
   static const routeName = '/registerscreen';
@@ -82,10 +80,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
     var screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
         body: Stack(children: [
-      const DoodleBackground(),
       Positioned(
         top: screenHeight / 15,
-        child: SizedBox(
+        child: Container(
+          color: Colors.white,
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
           child: Padding(
@@ -94,18 +92,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Text(
-                  'REGISTER',
-                  style: TextStyle(
-                      letterSpacing: 2,
-                      fontSize: 12,
-                      color: HexColor(fontColor),
-                      fontWeight: FontWeight.bold),
-                ),
                 SizedBox(
-                  height: screenHeight / 30,
+                  height: screenHeight / 16,
                 ),
-                SvgPicture.asset('assets/register_image.svg'),
+                Image.asset('assets/register.jpeg'),
                 SizedBox(
                   height: screenHeight / 12,
                 ),
@@ -118,7 +108,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       children: [
                         CustomTextFormField(
                           controller: _emailController,
-                          hint: 'e-mail',
+                          hint: 'user@email.com',
                           validator: (value) =>
                               value != null && !EmailValidator.validate(value)
                                   ? 'Enter a valid e-mail'
@@ -192,7 +182,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   children: [
                     Text('Registered already?',
                         style: TextStyle(
-                            fontSize: 12,
+                            fontSize: 14,
                             fontWeight: FontWeight.w500,
                             color: HexColor(fontColor))),
                     const SizedBox(
@@ -204,7 +194,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       child: const Text(
                         'Login',
                         style: TextStyle(
-                            fontWeight: FontWeight.w700, fontSize: 12),
+                            fontWeight: FontWeight.w700, fontSize: 14),
                       ),
                     )
                   ],

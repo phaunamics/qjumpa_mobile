@@ -6,8 +6,7 @@ import 'package:qjumpa/src/core/constants.dart';
 import 'package:qjumpa/src/core/firebase_auth.dart';
 import 'package:qjumpa/src/core/hex_converter.dart';
 import 'package:qjumpa/src/presentation/shopping_list/shopping_list.dart';
-import 'package:qjumpa/src/presentation/widgets/doodle_background.dart';
-import 'package:qjumpa/src/presentation/widgets/small_btn.dart';
+import 'package:qjumpa/src/presentation/widgets/small_button.dart';
 
 class EmailVerificationScreen extends StatefulWidget {
   static const routeName = '/emailverification';
@@ -61,7 +60,6 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          const DoodleBackground(),
           Positioned(
             top: screenHeight / 4,
             child: Padding(

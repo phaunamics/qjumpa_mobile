@@ -1,17 +1,15 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:qjumpa/injection.dart';
 import 'package:qjumpa/main.dart';
 import 'package:qjumpa/src/core/constants.dart';
 import 'package:qjumpa/src/core/firebase_auth.dart';
 import 'package:qjumpa/src/core/hex_converter.dart';
 import 'package:qjumpa/src/presentation/register_user/register_screen.dart';
-import 'package:qjumpa/src/presentation/shopping_list/shopping_list.dart';
 import 'package:qjumpa/src/presentation/update_password/update_password_screen.dart';
 import 'package:qjumpa/src/presentation/widgets/custom_textformfield.dart';
-import 'package:qjumpa/src/presentation/widgets/doodle_background.dart';
-import 'package:qjumpa/src/presentation/widgets/large_btn.dart';
+import 'package:qjumpa/src/presentation/widgets/large_button.dart';
 
 class LoginView extends StatefulWidget {
   static const routeName = '/loginview';
@@ -127,8 +125,8 @@ class _LoginViewState extends State<LoginView> {
         errorMessage = e.code;
       });
     }
-    navigatorKey.currentState!.pushNamedAndRemoveUntil(
-        ShoppingList.routeName, (route) => route.isFirst);
+    // return null;
+    navigatorKey.currentState!.popUntil((route) => route.isFirst);
     return null;
   }
 
@@ -168,10 +166,10 @@ class _LoginViewState extends State<LoginView> {
     var screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
         body: Stack(children: [
-      const DoodleBackground(),
       Positioned(
         top: screenHeight / 15,
-        child: SizedBox(
+        child: Container(
+          color: Colors.white,
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
           child: Padding(
@@ -180,20 +178,12 @@ class _LoginViewState extends State<LoginView> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Text(
-                  'LOGIN',
-                  style: TextStyle(
-                      letterSpacing: 2,
-                      fontSize: 12,
-                      color: HexColor(fontColor),
-                      fontWeight: FontWeight.bold),
-                ),
                 SizedBox(
-                  height: screenHeight / 30,
+                  height: screenHeight / 16,
                 ),
-                SvgPicture.asset('assets/login_image.svg'),
+                Image.asset('assets/Login.png'),
                 SizedBox(
-                  height: screenHeight / 8,
+                  height: screenHeight / 28.9,
                 ),
                 Form(
                   key: _formKey,
@@ -205,7 +195,7 @@ class _LoginViewState extends State<LoginView> {
                         CustomTextFormField(
                           validator: _emailValidator,
                           controller: _emailController,
-                          hint: 'e-mail',
+                          hint: 'user@email.com',
                           label: 'EMAIL',
                           value: false,
                           suffixIcon: null,
@@ -245,10 +235,11 @@ class _LoginViewState extends State<LoginView> {
                   onTap: () => Navigator.pushReplacementNamed(
                       context, UpdatePasswordScreen.routeName),
                   child: Padding(
-                    padding: EdgeInsets.symmetric(vertical: screenHeight / 30),
+                    padding: EdgeInsets.only(
+                        top: screenHeight / 40, bottom: screenHeight / 48),
                     child: Text(
-                      'Forgot Password?',
-                      style: TextStyle(
+                      'Forgot Password',
+                      style: GoogleFonts.poppins(
                           fontSize: 12,
                           color: HexColor(fontColor),
                           letterSpacing: 0.5),
@@ -279,7 +270,7 @@ class _LoginViewState extends State<LoginView> {
                     Text(
                       'Don’t have an account yet?',
                       style: TextStyle(
-                          fontSize: 12,
+                          fontSize: 14,
                           fontWeight: FontWeight.w500,
                           color: HexColor(fontColor)),
                     ),
@@ -292,7 +283,7 @@ class _LoginViewState extends State<LoginView> {
                       child: const Text(
                         'Register',
                         style: TextStyle(
-                            fontWeight: FontWeight.w700, fontSize: 12),
+                            fontWeight: FontWeight.w700, fontSize: 14),
                       ),
                     )
                   ],

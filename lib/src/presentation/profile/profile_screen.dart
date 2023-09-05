@@ -4,7 +4,6 @@ import 'package:qjumpa/src/core/constants.dart';
 import 'package:qjumpa/src/core/firebase_auth.dart';
 import 'package:qjumpa/src/core/hex_converter.dart';
 import 'package:qjumpa/src/presentation/login/login_view.dart';
-import 'package:qjumpa/src/presentation/widgets/doodle_background.dart';
 
 class ProfileScreen extends StatefulWidget {
   static const routeName = '/profile';
@@ -33,10 +32,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          const DoodleBackground(),
           Positioned(
-            top: screenHeight / 15,
-            child: SizedBox(
+            top: screenHeight / 11,
+            child: Container(
+              color: Colors.white,
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
               child: Padding(
@@ -44,53 +43,56 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Center(
-                      child: Text(
-                        'PROFILE',
-                        style: TextStyle(
-                            letterSpacing: 2,
-                            fontSize: 12,
-                            color: HexColor(fontColor),
-                            fontWeight: FontWeight.bold),
-                      ),
+                    Row(
+                      children: [
+                        IconButton(
+                            onPressed: () {
+                              return Navigator.pop(context);
+                            },
+                            icon: const Icon(
+                              Icons.chevron_left,
+                              size: 29,
+                            )),
+                        SizedBox(
+                          width: screenHeight / 8,
+                        ),
+                        const Center(
+                          child: Text(
+                            'PROFILE',
+                            style: TextStyle(
+                                letterSpacing: 1,
+                                fontSize: 15,
+                                color: Colors.black,
+                                fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                      ],
                     ),
                     SizedBox(
                       height: screenHeight / 37,
                     ),
-                    Center(
-                      child: CircleAvatar(
-                        backgroundColor: HexColor(primaryColor),
-                        radius: screenHeight / 17,
-                        child: const Icon(
-                          Icons.person,
-                          color: Colors.white,
-                          size: 39,
-                        ),
-                      ),
-                    ),
-                    // Padding(
-                    //   padding:
-                    //       EdgeInsets.symmetric(vertical: screenHeight / 74),
-                    //   child: Center(child: customText(text: '@tetenta')),
-                    // ),
+                    customText(
+                        text: '@${_auth.currentUser?.email?.split('@')[0]}'),
                     SizedBox(
                       height: screenHeight / 23,
                     ),
-                    customText(text: 'PROFILE', color: HexColor(fontColor)),
-                    Padding(
-                      padding:
-                          EdgeInsets.symmetric(vertical: screenHeight / 43),
-                      child: customText(text: 'Change Password'),
+                    customText(
+                      text: 'PROFILE',
+                      color: HexColor(fontColor),
                     ),
-                    customText(text: 'Change Username '),
                     SizedBox(
                       height: screenHeight / 37,
                     ),
-                    customText(text: 'Q-jumpa', color: HexColor(fontColor)),
-                    Padding(
-                      padding:
-                          EdgeInsets.symmetric(vertical: screenHeight / 43),
-                      child: customText(text: 'Rate on Playstore'),
+                    customText(text: 'Change Password'),
+                    SizedBox(
+                      height: screenHeight / 37,
+                    ),
+                    customText(
+                      text: 'Q-jumpa',
+                      color: HexColor(fontColor),
+                    ),
+                    SizedBox(
+                      height: screenHeight / 37,
                     ),
                     customText(text: 'Contact Us'),
                     SizedBox(
@@ -103,20 +105,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               context, LoginView.routeName);
                         },
                         child: customText(text: 'Logout', color: Colors.red)),
-                    SizedBox(
-                      height: screenHeight / 4.5,
-                    ),
-                    Center(
-                      child: IconButton(
-                          onPressed: () {
-                            return Navigator.pop(context);
-                          },
-                          icon: const Icon(
-                            Icons.close,
-                            size: 40,
-                            color: Colors.red,
-                          )),
-                    )
                   ],
                 ),
               ),

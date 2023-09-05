@@ -5,9 +5,9 @@ import 'package:qjumpa/src/core/hex_converter.dart';
 class BottomNavIcon extends StatelessWidget {
   final void Function()? onTap;
   final Widget widget;
-  final String value;
+  final String iconName;
   const BottomNavIcon(
-      {super.key, this.onTap, required this.widget, required this.value});
+      {super.key, this.onTap, required this.widget, required this.iconName});
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +18,7 @@ class BottomNavIcon extends StatelessWidget {
         children: [
           widget,
           Text(
-            value,
+            iconName,
             style: TextStyle(
                 fontSize: 12,
                 color: HexColor(fontColor),

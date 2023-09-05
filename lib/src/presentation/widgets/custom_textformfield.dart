@@ -11,7 +11,7 @@ class CustomTextFormField extends StatefulWidget {
   final FocusNode? focusnode;
   final bool? focus;
   String? Function(String?)? validator;
-  final void Function(String)? onChanged;
+  final void Function(String?)? onChanged;
 
   CustomTextFormField({
     super.key,

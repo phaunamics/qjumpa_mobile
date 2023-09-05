@@ -2,85 +2,62 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:qjumpa/src/core/constants.dart';
 import 'package:qjumpa/src/core/hex_converter.dart';
-import 'package:qjumpa/src/presentation/shopping_list/shopping_list.dart';
-import 'package:qjumpa/src/presentation/widgets/doodle_background.dart';
 
 class BottomNavBar extends StatefulWidget {
-  const BottomNavBar({
-    super.key,
-    required this.screenHeight,
-    required this.screenWidth,
-    required this.widget,
-  });
-
-  final double screenHeight;
-  final double screenWidth;
-  final Widget widget;
+  final Widget customWidget;
+  final String? iconName;
+  final List<Widget> pages;
+  int currentIndex;
+  BottomNavBar(
+      {Key? key,
+      required this.customWidget,
+      this.iconName,
+      this.currentIndex = 1,
+      required this.pages})
+      : super(key: key);
 
   @override
   State<BottomNavBar> createState() => _BottomNavBarState();
 }
 
-bool isShoppingListClicked = false;
-
 class _BottomNavBarState extends State<BottomNavBar> {
+  // int _currentIndex = 1;
+
+  void _onItemTapped(int index) {
+    setState(() {
+      widget.currentIndex = index;
+    });
+  }
+
+  // static const List<Widget> _pages = <Widget>[
+  //   StoreSearchScreen(),
+  //   ShoppingList()
+  // ];
   @override
   Widget build(BuildContext context) {
-    print('before tap $isShoppingListClicked');
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(15),
-      child: SizedBox(
-        height: widget.screenHeight / 10.8,
-        width: widget.screenWidth / 1.7,
-        child: Stack(
-          children: [
-            const DoodleBackground(
-              opacity: 1,
-            ),
-            Container(
-              height: widget.screenHeight / 10.8,
-              width: widget.screenWidth / 1.7,
-              color: HexColor(primaryColor).withOpacity(0.88),
-              child: Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    widget.widget,
-                    SizedBox(
-                      width: widget.screenHeight / 23,
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        if (!isShoppingListClicked) {
-                          Navigator.pushReplacementNamed(
-                              context, ShoppingList.routeName);
-                          isShoppingListClicked = true;
-                          print('After tap $isShoppingListClicked');
-                        } else {
-                          null;
-                        }
-                      },
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          SvgPicture.asset('assets/shopping_list_icon.svg'),
-                          Text(
-                            'Shopping list',
-                            style: TextStyle(
-                                fontSize: 12,
-                                color: HexColor(fontColor),
-                                fontWeight: FontWeight.w500),
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
+    return Scaffold(
+      body: Center(
+        child: widget.pages.elementAt(widget.currentIndex),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        currentIndex: widget.currentIndex,
+        onTap: _onItemTapped,
+        selectedItemColor: Colors.white,
+        selectedFontSize: 16,
+        unselectedFontSize: 14,
+        unselectedItemColor: const Color(0xff828282),
+        backgroundColor: HexColor(primaryColor),
+        items: [
+          BottomNavigationBarItem(
+              icon: widget.customWidget,
+              label: 'Shop',
+              activeIcon: SvgPicture.asset('assets/shop_selected.svg')),
+          BottomNavigationBarItem(
+              icon: SvgPicture.asset('assets/shopping_list_icon.svg'),
+              activeIcon: SvgPicture.asset('assets/shopping_list_selected.svg'),
+              label: 'Shopping List'),
+        ],
       ),
     );
   }

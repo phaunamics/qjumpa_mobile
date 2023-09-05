@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:qjumpa/injection.dart';
 import 'package:qjumpa/src/core/constants.dart';
 import 'package:qjumpa/src/core/hex_converter.dart';
-import 'package:qjumpa/src/data/preferences/item_shared_preferences.dart';
+import 'package:qjumpa/src/data/local_storage/item_shared_preferences.dart';
 import 'package:qjumpa/src/domain/entity/shopping_list_entity.dart';
-import 'package:qjumpa/src/presentation/widgets/large_btn.dart';
+import 'package:qjumpa/src/presentation/widgets/large_button.dart';
 
 class CreateNewListView extends StatefulWidget {
   const CreateNewListView({super.key});
@@ -36,10 +36,7 @@ class _CreateNewListViewState extends State<CreateNewListView> {
   }
 
   List<ItemBody> mapTextToItemBody(String text) {
-    // String text = _listcontroller.text.trim();
-    // print('text: $text');
     List<String> lines = text.split('\n');
-    // print('list of line: $lines');
     List<ItemBody> itemBodies =
         lines.map((line) => ItemBody.withId(content: line)).toList();
 
@@ -114,10 +111,9 @@ class _CreateNewListViewState extends State<CreateNewListView> {
             if (_formKey.currentState!.validate()) {
               var title = _titleController.text;
               var itemBody = mapTextToItemBody(_listcontroller.text.trim());
-              print('item body is ${itemBody.toString()}');
+              // print('item body is ${itemBody.toString()}');
               var item =
                   ShoppingListEntity.withId(body: itemBody, title: title);
-              // print('item is ${item.toString()}');
               shoppingListSharedPref.addNewShoppingList(item);
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(

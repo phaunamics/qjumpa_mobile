@@ -5,8 +5,7 @@ import 'package:qjumpa/src/core/firebase_auth.dart';
 import 'package:qjumpa/src/core/hex_converter.dart';
 import 'package:qjumpa/src/presentation/login/login.dart';
 import 'package:qjumpa/src/presentation/widgets/custom_textformfield.dart';
-import 'package:qjumpa/src/presentation/widgets/doodle_background.dart';
-import 'package:qjumpa/src/presentation/widgets/large_btn.dart';
+import 'package:qjumpa/src/presentation/widgets/large_button.dart';
 
 class UpdatePasswordScreen extends StatefulWidget {
   static const routeName = '/updatepaswword';
@@ -44,7 +43,6 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
 
     return Scaffold(
         body: Stack(children: [
-      const DoodleBackground(),
       Positioned(
         top: screenHeight / 10,
         child: SizedBox(
