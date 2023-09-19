@@ -37,7 +37,7 @@ class EmptyCartScreen extends StatelessWidget {
                   SizedBox(
                     height: screenHeight / 9,
                   ),
-                  const Image(image: AssetImage('assets/empty_cart.jpeg')),
+                  const Image(image: AssetImage('assets/empty_cart.jpeg'),),
                   const Text(
                     'Your cart is empty',
                     style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600),

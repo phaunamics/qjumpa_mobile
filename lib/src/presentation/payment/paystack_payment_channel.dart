@@ -53,23 +53,27 @@ class _PaystackPaymentChannelState extends State<PaystackPaymentChannel> {
               builder: (context) =>
                   PaymentSuccess(successMessage: successMessage)),
           ModalRoute.withName('/'));
-    } else {}
+    } else {
+      //implement payment failure
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
     return SizedBox(
-      height: screenHeight / 5.3,
+      height: screenHeight / 3.2,
       child: Column(
         children: [
-          const SizedBox(height: 10),
+          SizedBox(
+            height: screenHeight / 23,
+          ),
           Text(
             "Choose a payment method",
             style: Theme.of(context).textTheme.titleLarge,
           ),
-          SizedBox(height: screenHeight / 26),
-          channelWidget(context, Channel.card, HexColor(ctnColor)),
+          SizedBox(height: screenHeight / 12),
+          channelWidget(context, Channel.card, HexColor(primaryColor)),
         ],
       ),
     );
@@ -84,23 +88,6 @@ class _PaystackPaymentChannelState extends State<PaystackPaymentChannel> {
       onTap: () {
         checkout();
       },
-      //
-      // Navigator.push(
-      //   context,
-      //   MaterialPageRoute(
-      //     builder: (context) => PaymentScreen(
-      //       reference: UUIDGenerator.uniqueRefenece(12),
-      //       currency: 'NGN',
-      //       email: 'email@yahoo.com',
-      //       amount: (cartSharedPref.subTotal * 100).toString(),
-      //       onCompletedTransaction: (value) {
-      //         print("completed transaction ${value.toString()}");
-      //       },
-      //       onFailedTransaction: (value) {
-      //         print("completed transaction ${value.toString()}");
-      //       },
-      //     ),
-      //   ),
       child: SizedBox(
         width: 300,
         child: Card(
@@ -110,11 +97,14 @@ class _PaystackPaymentChannelState extends State<PaystackPaymentChannel> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                const Icon(Icons.add_card_outlined),
+                const Icon(
+                  Icons.add_card_outlined,
+                  color: Colors.white,
+                ),
                 Text(
                   channel.name.split("_").join(" ").toUpperCase(),
                   textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.titleMedium,
+                  style: const TextStyle(color: Colors.white, fontSize: 15),
                 ),
               ],
             ),

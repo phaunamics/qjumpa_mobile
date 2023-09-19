@@ -13,7 +13,7 @@ import 'package:qjumpa/src/presentation/select_store/select_store_screen.dart';
 import 'package:qjumpa/src/presentation/shopping_cart/cart.dart';
 import 'package:qjumpa/src/presentation/shopping_cart/empty_cart_screen.dart';
 import 'package:qjumpa/src/presentation/shopping_list/create_new_list.dart';
-import 'package:qjumpa/src/presentation/shopping_list/shopping_list.dart';
+import 'package:qjumpa/src/presentation/shopping_list/shopping_list_screen.dart';
 import 'package:qjumpa/src/presentation/splash_screen/splash_screen.dart';
 import 'package:qjumpa/src/presentation/update_password/update_password_screen.dart';
 import 'package:qjumpa/src/presentation/verification/email_verification.dart';
@@ -39,7 +39,7 @@ final Map<String, WidgetBuilder> routes = {
   EmptyCartScreen.routeName: (context) => const EmptyCartScreen(),
   SelectStoreScreen.routeName: (context) => const SelectStoreScreen(),
   Cart.routeName: (context) => const Cart(),
-  ShoppingList.routeName: (context) => const ShoppingList(),
+  ShoppingListScreen.routeName: (context) => const ShoppingListScreen(),
   IOSScannerView.routeName: (context) => const IOSScannerView(),
   CreateNewListScreen.routeName: (context) => const CreateNewListScreen(),
 };

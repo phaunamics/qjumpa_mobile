@@ -74,8 +74,12 @@ class CartSharedPreferences {
         orders.indexWhere((order) => order.orderId == newOrder.orderId);
     final Order oldOrder = orders[index];
     int oldOrderQuantity = oldOrder.qty;
-    newOrder = oldOrder.copyWith(qty: oldOrderQuantity - 1);
-    orders[index] = newOrder;
+    if (oldOrderQuantity > 1) {
+      newOrder = oldOrder.copyWith(qty: oldOrderQuantity - 1);
+      orders[index] = newOrder;
+    } else {
+      orders.removeAt(index); // Remove the order when quantity reaches zero
+    }
 
     _sharedPreferences.setString(_cartKey, jsonEncode(orders));
     _controller.add(orders.length);

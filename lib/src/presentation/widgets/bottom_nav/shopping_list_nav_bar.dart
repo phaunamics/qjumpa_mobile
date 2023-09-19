@@ -2,46 +2,44 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:qjumpa/src/core/constants.dart';
 import 'package:qjumpa/src/core/hex_converter.dart';
+import 'package:qjumpa/src/presentation/select_store/select_store_screen.dart';
+import 'package:qjumpa/src/presentation/shopping_list/shopping_list_screen.dart';
 
-class BottomNavBar extends StatefulWidget {
-  final Widget customWidget;
-  final String? iconName;
-  final List<Widget> pages;
-  int currentIndex;
-  BottomNavBar(
-      {Key? key,
-      required this.customWidget,
-      this.iconName,
-      this.currentIndex = 1,
-      required this.pages})
-      : super(key: key);
+class ShoppingListNavBar extends StatefulWidget {
+  // final Widget customWidget;
+  // final String? iconName;
+  // final List<Widget> pages;
+  // int currentIndex;
+  const ShoppingListNavBar({
+    Key? key,
+  }) : super(key: key);
 
   @override
-  State<BottomNavBar> createState() => _BottomNavBarState();
+  State<ShoppingListNavBar> createState() => _ShoppingListNavBarState();
 }
 
-class _BottomNavBarState extends State<BottomNavBar> {
-  // int _currentIndex = 1;
+class _ShoppingListNavBarState extends State<ShoppingListNavBar> {
+  int _currentIndex = 1;
 
   void _onItemTapped(int index) {
     setState(() {
-      widget.currentIndex = index;
+      _currentIndex = index;
     });
   }
 
-  // static const List<Widget> _pages = <Widget>[
-  //   StoreSearchScreen(),
-  //   ShoppingList()
-  // ];
+  final List<Widget> _pages = <Widget>[
+    const SelectStoreScreen(),
+    const ShoppingListScreen()
+  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: widget.pages.elementAt(widget.currentIndex),
+        child: _pages.elementAt(_currentIndex),
       ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        currentIndex: widget.currentIndex,
+        currentIndex: _currentIndex,
         onTap: _onItemTapped,
         selectedItemColor: Colors.white,
         selectedFontSize: 16,
@@ -50,7 +48,9 @@ class _BottomNavBarState extends State<BottomNavBar> {
         backgroundColor: HexColor(primaryColor),
         items: [
           BottomNavigationBarItem(
-              icon: widget.customWidget,
+              icon: SvgPicture.asset(
+                'assets/shop_icon.svg',
+              ),
               label: 'Shop',
               activeIcon: SvgPicture.asset('assets/shop_selected.svg')),
           BottomNavigationBarItem(

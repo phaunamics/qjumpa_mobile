@@ -13,7 +13,7 @@ class CreateNewListScreen extends StatelessWidget {
       body: Stack(
         children: [
           Positioned(
-            top: screenHeight / 15,
+            top: screenHeight / 25,
             child: SizedBox(
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,

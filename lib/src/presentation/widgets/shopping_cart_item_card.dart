@@ -44,13 +44,16 @@ class _ItemCardState extends State<ItemCard> {
     return Column(
       children: [
         Container(
-          height: screenHeight / 9,
+          height: screenHeight / 8.6,
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(15),
               color: HexColor(ctnColor)),
           child: Padding(
-            padding:
-                const EdgeInsets.only(left: 15.0, right: 6, top: 4, bottom: 4),
+            padding: EdgeInsets.only(
+                left: 15.0,
+                right: 6,
+                top: screenHeight / 200,
+                bottom: screenHeight / 290),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -109,14 +112,13 @@ class _ItemCardState extends State<ItemCard> {
                             ),
                             GestureDetector(
                               onTap: () {
-                                setState(() {
-                                  if (_qty == 0) {
-                                    return;
-                                  }
-                                  _qty -= 1;
-                                  cartSharedPref.decreaseItemInCart(
-                                      widget.order.copyWith(qty: _qty));
-                                });
+                                if (_qty > 0) {
+                                  setState(() {
+                                    _qty -= 1;
+                                    cartSharedPref.decreaseItemInCart(
+                                        widget.order.copyWith(qty: _qty));
+                                  });
+                                }
                               },
                               child: Icon(Icons.remove,
                                   color: HexColor(counterColor), size: 30),

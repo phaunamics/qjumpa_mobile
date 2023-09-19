@@ -7,16 +7,16 @@ import 'package:qjumpa/injection.dart';
 import 'package:qjumpa/src/core/constants.dart';
 import 'package:qjumpa/src/core/hex_converter.dart';
 import 'package:qjumpa/src/data/local_storage/cart_shared_preferences.dart';
-import 'package:qjumpa/src/domain/entity/arguments.dart';
+import 'package:qjumpa/src/domain/entity/order_entity.dart';
 import 'package:qjumpa/src/domain/entity/store_entity.dart';
 import 'package:qjumpa/src/domain/entity/store_inventory.dart';
 import 'package:qjumpa/src/domain/usecases/get_inventory_usecase.dart';
 import 'package:qjumpa/src/presentation/product_scan/bloc/barcodescanner_bloc.dart';
-import 'package:qjumpa/src/presentation/product_scan/product_scan_screen.dart';
 import 'package:qjumpa/src/presentation/product_search/bloc/product_search_bloc.dart';
 import 'package:qjumpa/src/presentation/widgets/custom_badge.dart';
 import 'package:qjumpa/src/presentation/widgets/custom_textformfield.dart';
 import 'package:qjumpa/src/presentation/widgets/ios_scanner_view.dart';
+import 'package:qjumpa/src/presentation/widgets/large_button.dart';
 import 'package:qjumpa/src/presentation/widgets/search_result_card.dart';
 
 class ProductSearchScreen extends StatefulWidget {
@@ -72,12 +72,16 @@ class _ProductSearchScreenState extends State<ProductSearchScreen> {
       bloc: getBarcodeScannerbloc,
       listener: (context, state) {
         if (state is BarcodescannerCompleted) {
-          Navigator.pushNamed(
-            context,
-            ProductScanScreen.routeName,
-            arguments: Arguments(
-                inventory: state.inventory, storeEntity: widget.storeEntity),
-          );
+          showModalBottomSheet(
+              context: context,
+              builder: (context) {
+                return productScanView(
+                    screenHeight: screenHeight / 100,
+                    context: context,
+                    screenWidth: screenWidth,
+                    storeEntity: widget.storeEntity,
+                    order: state.inventory.order);
+              });
         }
       },
       child: Scaffold(
@@ -191,21 +195,6 @@ class _ProductSearchScreenState extends State<ProductSearchScreen> {
             );
           },
         ),
-        // bottomNavigationBar: BottomNavBar(
-        //   pages: [
-        //     buildScreen(
-        //         screenHeight: screenHeight,
-        //         context: context,
-        //         screenWidth: screenWidth,
-        //         storeId: widget.storeEntity?.id.toString(),
-        //         widget: const SizedBox()),
-        //     const ShoppingList()
-        //   ],
-        //   currentIndex: 0,
-        //   customWidget: SvgPicture.asset(
-        //     'assets/shop_icon.svg',
-        //   ),
-        // ),
       ),
     );
   }
@@ -297,6 +286,100 @@ class _ProductSearchScreenState extends State<ProductSearchScreen> {
                       ],
                     ),
                   )
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget productScanView(
+      {required double screenHeight,
+      required BuildContext context,
+      required double screenWidth,
+      StoreEntity? storeEntity,
+      Order? order}) {
+    return Stack(
+      children: [
+        Positioned(
+          top: screenHeight / 10,
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: screenWidth / 17),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      StreamBuilder<int>(
+                        stream: _cartSharedPref.cartCountStream,
+                        initialData: _cartSharedPref.totalItemsInCart,
+                        builder: (context, snapshot) {
+                          return CustomBadge(
+                            badgeCount: snapshot.data ?? 0,
+                          );
+                        },
+                      )
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 30,
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: SearchResultCard(
+                          order: order!,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 50,
+                  ),
+                  Center(
+                    child: LargeBtn(
+                      onTap: performPlatformSpecificBarcodeScan,
+                      text: 'Keep scanning',
+                      color: HexColor(primaryColor),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 38,
+                  ),
+                  Center(
+                    child: Text(
+                      'Having trouble scanning?',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                        color: HexColor(fontColor),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: screenHeight / 54,
+                  ),
+                  Center(
+                    child: GestureDetector(
+                      onTap: () => Navigator.pushReplacementNamed(
+                          context, ProductSearchScreen.routeName,
+                          arguments: storeEntity),
+                      child: Text(
+                        'Manually search ',
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          color: HexColor(primaryColor),
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),

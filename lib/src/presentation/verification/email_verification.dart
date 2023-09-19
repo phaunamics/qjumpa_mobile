@@ -5,7 +5,7 @@ import 'package:qjumpa/injection.dart';
 import 'package:qjumpa/src/core/constants.dart';
 import 'package:qjumpa/src/core/firebase_auth.dart';
 import 'package:qjumpa/src/core/hex_converter.dart';
-import 'package:qjumpa/src/presentation/shopping_list/shopping_list.dart';
+import 'package:qjumpa/src/presentation/shopping_list/shopping_list_screen.dart';
 import 'package:qjumpa/src/presentation/widgets/small_button.dart';
 
 class EmailVerificationScreen extends StatefulWidget {
@@ -36,7 +36,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
     });
 
     if (isEmailVerified) {
-      Navigator.pushReplacementNamed(context, ShoppingList.routeName);
+      Navigator.pushReplacementNamed(context, ShoppingListScreen.routeName);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text("Email Successfully Verified"),

@@ -33,32 +33,32 @@ class _LoginViewState extends State<LoginView> {
   Future<User?> signInWithEmailAndPassword(
       {required String userEmail, required String password}) async {
     try {
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => Scaffold(
-          backgroundColor: Colors.transparent,
-          body: Column(
-            children: [
-              SizedBox(
-                height: MediaQuery.of(context).size.height / 4,
-              ),
-              Center(
-                child: CircularProgressIndicator(
-                  color: HexColor(primaryColor),
-                ),
-              ),
-              SizedBox(
-                height: MediaQuery.of(context).size.height / 20,
-              ),
-              const Text(
-                'Welcome ...',
-                style: TextStyle(fontSize: 25, color: Colors.white),
-              ),
-            ],
-          ),
-        ),
-      );
+      // showDialog(
+      //   context: context,
+      //   barrierDismissible: false,
+      //   builder: (context) => Scaffold(
+      //     backgroundColor: Colors.transparent,
+      //     body: Column(
+      //       children: [
+      //         SizedBox(
+      //           height: MediaQuery.of(context).size.height / 4,
+      //         ),
+      //         Center(
+      //           child: CircularProgressIndicator(
+      //             color: HexColor(primaryColor),
+      //           ),
+      //         ),
+      //         SizedBox(
+      //           height: MediaQuery.of(context).size.height / 20,
+      //         ),
+      //         const Text(
+      //           'Welcome ...',
+      //           style: TextStyle(fontSize: 25, color: Colors.white),
+      //         ),
+      //       ],
+      //     ),
+      //   ),
+      // );
       await auth.signInWithEmailAndPassword(
           email: userEmail, password: password);
     } on FirebaseAuthException catch (e) {
@@ -66,9 +66,11 @@ class _LoginViewState extends State<LoginView> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(12),
-                    topRight: Radius.circular(12))),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(12),
+                topRight: Radius.circular(12),
+              ),
+            ),
             backgroundColor: Colors.grey.shade300,
             content: const Text(
               'Incorrect login details. Check email or password',
@@ -125,8 +127,9 @@ class _LoginViewState extends State<LoginView> {
         errorMessage = e.code;
       });
     }
-    // return null;
-    navigatorKey.currentState!.popUntil((route) => route.isFirst);
+
+    // navigatorKey.currentState!.popUntil((route) => route.isFirst);
+    navigatorKey.currentState!.pop();
     return null;
   }
 

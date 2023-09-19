@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:qjumpa/src/core/constants.dart';
 import 'package:qjumpa/src/core/hex_converter.dart';
-import 'package:qjumpa/src/presentation/shopping_list/shopping_list.dart';
+import 'package:qjumpa/src/presentation/shopping_list/shopping_list_screen.dart';
 
 class PaymentSuccess extends StatelessWidget {
   const PaymentSuccess({super.key, required this.successMessage});
@@ -36,7 +36,7 @@ class PaymentSuccess extends StatelessWidget {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const ShoppingList()));
+                            builder: (context) => const ShoppingListScreen()));
                   },
                   style: ElevatedButton.styleFrom(
                       // foregroundColor: Colors.white,

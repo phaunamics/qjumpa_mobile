@@ -8,15 +8,15 @@ import 'package:qjumpa/src/presentation/profile/profile_screen.dart';
 import 'package:qjumpa/src/presentation/shopping_list/create_new_list.dart';
 import 'package:qjumpa/src/presentation/widgets/collapsible_container.dart';
 
-class ShoppingList extends StatefulWidget {
+class ShoppingListScreen extends StatefulWidget {
   static const routeName = '/shopping_list';
-  const ShoppingList({super.key});
+  const ShoppingListScreen({super.key});
 
   @override
-  State<ShoppingList> createState() => _ShoppingListState();
+  State<ShoppingListScreen> createState() => _ShoppingListScreenState();
 }
 
-class _ShoppingListState extends State<ShoppingList> {
+class _ShoppingListScreenState extends State<ShoppingListScreen> {
   final shoppingListSharedPref = sl.get<ShoppingListSharedPreferences>();
   final _auth = sl.get<Auth>();
 
@@ -77,56 +77,36 @@ class _ShoppingListState extends State<ShoppingList> {
                       ),
                     ),
                     SizedBox(
-                      height: screenHeight / 45,
+                      height: screenHeight / 12,
                     ),
                     GestureDetector(
-                      onTap: () => Navigator.pushNamed(
-                          context, CreateNewListScreen.routeName),
+                      onTap: () => showModalBottomSheet(
+                        shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(8),
+                                topRight: Radius.circular(8))),
+                        context: context,
+                        builder: (context) {
+                          return const CreateNewListScreen();
+                        },
+                      ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           const Text(
-                            'Create a new list',
+                            'Create a New List',
                             style: TextStyle(fontSize: 18),
                           ),
                           SizedBox(
-                            width: screenHeight / 65,
+                            width: screenHeight / 25,
                           ),
-                          CircleAvatar(
-                            backgroundColor: HexColor(primaryColor),
-                            radius: screenHeight / 34,
-                            child: const Icon(
-                              Icons.add_outlined,
-                              color: Colors.white,
-                            ),
+                          Icon(
+                            Icons.create,
+                            color: HexColor(primaryColor),
                           ),
                         ],
                       ),
                     ),
-                    SizedBox(
-                      height: screenHeight / 32,
-                    ),
-                    // Row(
-                    //   mainAxisAlignment: MainAxisAlignment.center,
-                    //   children: [
-                    //     BottomNavBar(
-                    //       screenHeight: screenHeight,
-                    //       screenWidth: screenWidth,
-                    //       widget: BottomNavIcon(
-                    //         value: 'Shop',
-                    //         onTap: () {
-                    //           Navigator.pushReplacementNamed(
-                    //               context, StoreSearchScreen.routeName);
-                    //         },
-                    //         widget: const Icon(
-                    //           Icons.shopping_cart_checkout_outlined,
-                    //           color: Colors.white,
-                    //           size: 27,
-                    //         ),
-                    //       ),
-                    //     ),
-                    //   ],
-                    // )
                   ],
                 ),
               ),

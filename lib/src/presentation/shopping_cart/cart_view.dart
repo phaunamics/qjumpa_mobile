@@ -1,18 +1,41 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:qjumpa/injection.dart';
+import 'package:qjumpa/src/core/constants.dart';
+import 'package:qjumpa/src/core/firebase_auth.dart';
+import 'package:qjumpa/src/core/hex_converter.dart';
 import 'package:qjumpa/src/data/local_storage/cart_shared_preferences.dart';
 import 'package:qjumpa/src/domain/entity/order_entity.dart';
+import 'package:qjumpa/src/presentation/login/login_view.dart';
 import 'package:qjumpa/src/presentation/payment/paystack_payment_channel.dart';
 import 'package:qjumpa/src/presentation/widgets/shopping_cart_item_card.dart';
 import 'package:qjumpa/src/presentation/widgets/small_button.dart';
 
-class CartView extends StatelessWidget {
+class CartView extends StatefulWidget {
   static const routeName = '/cartView';
 
+  const CartView({super.key});
+
+  @override
+  State<CartView> createState() => _CartViewState();
+}
+
+class _CartViewState extends State<CartView> {
   final cartSharedPref = sl.get<CartSharedPreferences>();
 
-  CartView({super.key});
+  final _auth = sl.get<Auth>();
+
+  void checkIfUserIsLoggedIn() {
+    if (_auth.currentUser != null) {
+      showModalBottomSheet(
+        context: context,
+        builder: (context) => const PaystackPaymentChannel(),
+      );
+    } else {
+      loginRequestPopUp(context).show();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,11 +100,7 @@ class CartView extends StatelessWidget {
                       child: SmallBtn(
                         text: 'Pay',
                         onTap: () {
-                          showModalBottomSheet(
-                            context: context,
-                            builder: (context) =>
-                                const PaystackPaymentChannel(),
-                          );
+                          checkIfUserIsLoggedIn();
                         },
                         fontSize: 24,
                         fontWeight: FontWeight.w600,
@@ -108,16 +127,77 @@ class CartView extends StatelessWidget {
   Widget shoopingCartListView(double screenHeight) {
     return SizedBox(
       height: screenHeight / 1.43,
-      child: ListView.builder(
-        padding: const EdgeInsets.fromLTRB(4, 4, 4, 0),
-        itemCount: cartSharedPref.totalItemsInCart,
-        itemBuilder: (context, index) {
-          final Order order = cartSharedPref.getCartItems()[index];
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 12.0),
-            child: ItemCard(order: order),
-          );
+      child: StreamBuilder<int>(
+        stream: cartSharedPref.cartCountStream,
+        initialData: cartSharedPref.totalItemsInCart,
+        builder: (context, snapshot) {
+          if (snapshot.hasData && snapshot.data! > 0) {
+            return ListView.builder(
+              padding: const EdgeInsets.fromLTRB(4, 4, 4, 0),
+              itemCount: cartSharedPref.totalItemsInCart,
+              itemBuilder: (context, index) {
+                final Order order = cartSharedPref.getCartItems()[index];
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 12.0),
+                  child: ItemCard(order: order),
+                );
+              },
+            );
+          } else {
+            // Show an empty SizedBox when the cart is empty
+            return Column(
+              children: [
+                const Image(
+                  image: AssetImage('assets/empty_cart.jpeg'),
+                ),
+                const Text(
+                  'Your cart is empty',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
+                ),
+                SizedBox(
+                  height: screenHeight / 32,
+                ),
+                const Text(
+                  'Scan the barcode on any product on\nthe shelf or search for it to add it to\nyour cart.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
+                )
+              ],
+            );
+          }
         },
+      ),
+    );
+  }
+
+  AwesomeDialog loginRequestPopUp(BuildContext context) {
+    return AwesomeDialog(
+      context: context,
+      dialogType: DialogType.info,
+      animType: AnimType.scale,
+      padding: const EdgeInsets.only(bottom: 6),
+      desc: 'Please login or register to proceed to payment',
+      btnOk: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 20),
+        decoration: BoxDecoration(
+            color: HexColor(primaryColor),
+            borderRadius: BorderRadius.circular(8)),
+        child: ElevatedButton(
+          onPressed: () => Navigator.pushReplacementNamed(
+              context, LoginView.routeName,
+              arguments: ModalRoute.of(context)!.settings.name),
+          style: ButtonStyle(
+            side: MaterialStateProperty.all(BorderSide.none),
+            backgroundColor: MaterialStateProperty.all(
+              HexColor(primaryColor),
+            ),
+          ),
+          child: const Text(
+            'Login',
+            style: TextStyle(
+                fontSize: 14, fontWeight: FontWeight.w500, color: Colors.white),
+          ),
+        ),
       ),
     );
   }

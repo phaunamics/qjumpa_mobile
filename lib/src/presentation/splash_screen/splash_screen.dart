@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:qjumpa/src/core/constants.dart';
 import 'package:qjumpa/src/core/hex_converter.dart';
 import 'package:qjumpa/src/presentation/login/login.dart';
+import 'package:qjumpa/src/presentation/select_store/select_store_screen.dart';
 
 class SplashScreeen extends StatefulWidget {
   static const routeName = '/splashscreen';
@@ -21,7 +22,7 @@ class _SplashScreeenState extends State<SplashScreeen> {
   void initState() {
     super.initState();
     timer = Timer(const Duration(seconds: 4), () {
-      Navigator.pushReplacementNamed(context, Login.routeName);
+      Navigator.pushReplacementNamed(context, SelectStoreScreen.routeName);
     });
   }
 

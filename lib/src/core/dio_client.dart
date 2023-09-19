@@ -41,10 +41,12 @@ class DioClient {
       final response = await dio.get(endPoint);
       if (response.statusCode == 200) {
         return response.data;
-      } else {
+      } else if (response.statusCode == 503) {
         throw ServerError(
           message: 'Server returned error status: ${response.statusCode}',
         );
+      } else {
+        throw NoInternetException(message: 'No internet connection');
       }
     } on DioError catch (err) {
       if (err.type == DioErrorType.connectionError ||
