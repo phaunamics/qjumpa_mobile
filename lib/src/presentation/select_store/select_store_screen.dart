@@ -7,7 +7,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:qjumpa/injection.dart';
 import 'package:qjumpa/src/core/constants.dart';
-import 'package:qjumpa/src/core/firebase_auth.dart';
 import 'package:qjumpa/src/core/hex_converter.dart';
 import 'package:qjumpa/src/core/usecase.dart';
 import 'package:qjumpa/src/data/local_storage/cart_shared_preferences.dart';
@@ -15,9 +14,7 @@ import 'package:qjumpa/src/domain/entity/exception.dart';
 import 'package:qjumpa/src/domain/entity/order_entity.dart';
 import 'package:qjumpa/src/domain/entity/store_entity.dart';
 import 'package:qjumpa/src/domain/usecases/get_store_usecase.dart';
-import 'package:qjumpa/src/presentation/login/login_view.dart';
 import 'package:qjumpa/src/presentation/product_scan/bloc/barcodescanner_bloc.dart';
-import 'package:qjumpa/src/presentation/product_search/product_search_screen_.dart';
 import 'package:qjumpa/src/presentation/widgets/bottom_nav/product_search_nav_bar.dart';
 import 'package:qjumpa/src/presentation/widgets/bottom_nav/shopping_list_nav_bar.dart';
 import 'package:qjumpa/src/presentation/widgets/custom_badge.dart';
@@ -39,7 +36,7 @@ class _SelectStoreScreenState extends State<SelectStoreScreen> {
   final getBarcodeScannerbloc = sl.get<BarcodeScannerBloc>();
   final getstore = sl.get<GetStoreUseCase>();
   final _cartSharedPref = sl.get<CartSharedPreferences>();
-  
+
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
 
@@ -93,7 +90,7 @@ class _SelectStoreScreenState extends State<SelectStoreScreen> {
               context: context,
               builder: (context) {
                 return productScanView(
-                    screenHeight: screenHeight / 100,
+                    screenHeight: screenHeight / 97,
                     context: context,
                     screenWidth: screenWidth,
                     storeEntity: _dropdownValue,
@@ -119,7 +116,7 @@ class _SelectStoreScreenState extends State<SelectStoreScreen> {
               }
               if (state is BarcodescannerCompleted) {
                 productScanView(
-                    screenHeight: screenHeight / 100,
+                    screenHeight: screenHeight / 97,
                     context: context,
                     screenWidth: screenWidth,
                     storeEntity: _dropdownValue,
@@ -181,7 +178,10 @@ class _SelectStoreScreenState extends State<SelectStoreScreen> {
                       ),
                       GestureDetector(
                         onTap: () {
-                          shoppingOptionPopUp(context, screenHeight).show();
+                          _dropdownValue == null
+                              ? null
+                              : shoppingOptionPopUp(context, screenHeight)
+                                  .show();
                         },
                         child: Container(
                           height: 52,
@@ -276,7 +276,6 @@ class _SelectStoreScreenState extends State<SelectStoreScreen> {
     );
   }
 
-
   AwesomeDialog shoppingOptionPopUp(BuildContext context, double screenHeight) {
     return AwesomeDialog(
       context: context,
@@ -305,77 +304,74 @@ class _SelectStoreScreenState extends State<SelectStoreScreen> {
             SizedBox(
               height: screenHeight / 67,
             ),
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 20),
-              decoration: BoxDecoration(
-                  color: HexColor(primaryColor),
-                  borderRadius: BorderRadius.circular(8)),
-              child: ElevatedButton(
-                onPressed: performPlatformSpecificBarcodeScan,
-                style: ButtonStyle(
-                  side: MaterialStateProperty.all(BorderSide.none),
-                  backgroundColor: MaterialStateProperty.all(
-                    HexColor(primaryColor),
+            GestureDetector(
+              onTap: performPlatformSpecificBarcodeScan,
+              child: Container(
+                height: 55,
+                margin: const EdgeInsets.symmetric(horizontal: 13),
+                decoration: BoxDecoration(
+                    color: HexColor(primaryColor),
+                    borderRadius: BorderRadius.circular(8)),
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 8.0),
+                  child: Row(
+                    children: [
+                      SvgPicture.asset('assets/scan_icon.svg'),
+                      const SizedBox(
+                        width: 24,
+                      ),
+                      const Text(
+                        'Scan barcodes',
+                        style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white),
+                      )
+                    ],
                   ),
-                ),
-                child: Row(
-                  children: [
-                    SvgPicture.asset('assets/scan_icon.svg'),
-                    const SizedBox(
-                      width: 24,
-                    ),
-                    const Text(
-                      'Scan barcodes',
-                      style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white),
-                    )
-                  ],
                 ),
               ),
             ),
             SizedBox(
               height: screenHeight / 110,
             ),
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 16),
-              decoration: BoxDecoration(
-                color: HexColor(primaryColor),
-                borderRadius: BorderRadius.circular(8),
+            GestureDetector(
+              onTap: () => Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ProductSearchBottomNavBar(
+                    storeEntity: _dropdownValue!,
+                  ),
+                ),
               ),
-              child: ElevatedButton(
-                onPressed: () => Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ProductSearchBottomNavBar(
-                      storeEntity: _dropdownValue!,
-                    ),
-                  ),
+              child: Container(
+                height: 55,
+                margin: const EdgeInsets.symmetric(horizontal: 13),
+                decoration: BoxDecoration(
+                  color: HexColor(primaryColor),
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(
-                    HexColor(primaryColor),
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 8.0),
+                  child: Row(
+                    children: const [
+                      Icon(
+                        Icons.search_rounded,
+                        size: 24,
+                        color: Colors.white,
+                      ),
+                      SizedBox(
+                        width: 8,
+                      ),
+                      Text(
+                        'Manually search for items',
+                        style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white),
+                      )
+                    ],
                   ),
-                ),
-                child: Row(
-                  children: const [
-                    Icon(
-                      Icons.search_rounded,
-                      size: 24,
-                      color: Colors.white,
-                    ),
-                    SizedBox(
-                      width: 8,
-                    ),
-                    Text(
-                      'Manually search for items',
-                      style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white),
-                    )
-                  ],
                 ),
               ),
             )
@@ -394,7 +390,7 @@ class _SelectStoreScreenState extends State<SelectStoreScreen> {
     return Stack(
       children: [
         Positioned(
-          top: screenHeight / 10,
+          top: screenHeight / 1,
           child: SizedBox(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
@@ -457,14 +453,18 @@ class _SelectStoreScreenState extends State<SelectStoreScreen> {
                   ),
                   Center(
                     child: GestureDetector(
-                      onTap: () => Navigator.pushReplacementNamed(
-                          context, ProductSearchScreen.routeName,
-                          arguments: storeEntity),
+                      onTap: () => Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ProductSearchBottomNavBar(
+                              storeEntity: storeEntity!),
+                        ),
+                      ),
                       child: Text(
                         'Manually search ',
                         style: TextStyle(
                           fontSize: 15,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w900,
                           color: HexColor(primaryColor),
                         ),
                       ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:qjumpa/injection.dart';
 import 'package:qjumpa/src/data/local_storage/item_shared_preferences.dart';
 import 'package:qjumpa/src/domain/entity/shopping_list_entity.dart';
@@ -96,8 +97,8 @@ class _CollapsibleListViewState extends State<CollapsibleListView> {
                           SizedBox(
                             height: 35,
                             width: 35,
-                            child: Image.asset(
-                              'assets/pointer.jpeg',
+                            child: SvgPicture.asset(
+                              'assets/radio-bullet.svg',
                               fit: BoxFit.contain,
                             ),
                           ),

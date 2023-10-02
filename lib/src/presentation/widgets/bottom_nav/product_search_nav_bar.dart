@@ -4,6 +4,7 @@ import 'package:qjumpa/src/core/constants.dart';
 import 'package:qjumpa/src/core/hex_converter.dart';
 import 'package:qjumpa/src/domain/entity/store_entity.dart';
 import 'package:qjumpa/src/presentation/product_search/product_search_screen_.dart';
+import 'package:qjumpa/src/presentation/select_store/select_store_screen.dart';
 import 'package:qjumpa/src/presentation/widgets/bottom_nav/shopping_list_nav_bar.dart';
 
 class ProductSearchBottomNavBar extends StatefulWidget {
@@ -29,6 +30,13 @@ class _ProductSearchBottomNavBarState extends State<ProductSearchBottomNavBar> {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) => const ShoppingListNavBar(),
+        ),
+      );
+    }
+    if (index == 0) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => const SelectStoreScreen(),
         ),
       );
     }
@@ -62,16 +70,12 @@ class _ProductSearchBottomNavBarState extends State<ProductSearchBottomNavBar> {
         backgroundColor: HexColor(primaryColor),
         items: [
           BottomNavigationBarItem(
-              icon: const Icon(
-                Icons.search_rounded,
-                size: 26,
-              ),
-              label: 'Shop',
-              activeIcon: Icon(
-                Icons.search_rounded,
-                size: 26,
-                color: HexColor(selectedTabBarColor),
-              )),
+            icon: SvgPicture.asset(
+              'assets/shop_icon.svg',
+            ),
+            label: 'Shop',
+            activeIcon: SvgPicture.asset('assets/shop_selected.svg'),
+          ),
           BottomNavigationBarItem(
               icon: SvgPicture.asset('assets/shopping_list_icon.svg'),
               activeIcon: SvgPicture.asset('assets/shopping_list_selected.svg'),

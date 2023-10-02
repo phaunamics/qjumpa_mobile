@@ -85,6 +85,7 @@ class _ProductSearchScreenState extends State<ProductSearchScreen> {
         }
       },
       child: Scaffold(
+        backgroundColor: Colors.white,
         body: BlocBuilder<ProductSearchBloc, ProductSearchState>(
           bloc: getProductSearchBloc,
           builder: (context, state) {
@@ -175,10 +176,11 @@ class _ProductSearchScreenState extends State<ProductSearchScreen> {
                         SizedBox(
                           height: screenHeight / 12,
                         ),
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(30),
-                          child:
-                              Image.asset('assets/No Internet Connection.png'),
+                        Center(
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(30),
+                            child: Image.asset('assets/network_error.jpg'),
+                          ),
                         ),
                       ],
                     ),
@@ -253,7 +255,7 @@ class _ProductSearchScreenState extends State<ProductSearchScreen> {
                       value: false),
                   widget,
                   Padding(
-                    padding: const EdgeInsets.only(left: 8.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
                     child: Row(
                       children: [
                         const Text(

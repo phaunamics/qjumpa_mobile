@@ -12,9 +12,15 @@ class CartSharedPreferences {
   final Map<int, StreamController<int>> _orderTotalControllers = {};
   final StreamController<int> _subTotalController =
       StreamController.broadcast();
+  final StreamController<double> _surchargeController =
+      StreamController.broadcast();
+  final StreamController<double> _grandTotalController =
+      StreamController.broadcast();
 
   Stream<int> get cartCountStream => _controller.stream;
   Stream<int> get subTotalStream => _subTotalController.stream;
+  Stream<double> get surchargeStream => _surchargeController.stream;
+  Stream<double> get grandTotalStream => _grandTotalController.stream;
 
   Stream<int> getOrderTotalStream(int orderId) {
     if (!_orderTotalControllers.containsKey(orderId)) {
@@ -40,9 +46,22 @@ class CartSharedPreferences {
     return orders.map((order) => order.total).toList().fold(0, (a, b) => a + b);
   }
 
+  double get surcharge {
+    // Calculate the surcharge as 0.3% of the subtotal, capped at 200
+    double calculatedSurcharge = subTotal * 0.003;
+    return calculatedSurcharge > 200 ? 200 : calculatedSurcharge;
+  }
+
+  double get grandTotal {
+    // Calculate the grand total as the sum of subtotal and surcharge
+    return subTotal + surcharge;
+  }
+
   CartSharedPreferences(this._sharedPreferences) {
     _controller.add(getCartItems().length);
     _subTotalController.add(subTotal);
+    _surchargeController.add(surcharge);
+    _grandTotalController.add(grandTotal);
   }
 
   void addItemToCart(Order newOrder) async {
@@ -62,6 +81,8 @@ class CartSharedPreferences {
     _sharedPreferences.setString(_cartKey, jsonEncode(orders));
     _controller.add(orders.length);
     _subTotalController.add(subTotal);
+    _surchargeController.add(surcharge);
+    _grandTotalController.add(grandTotal);
 
     if (_orderTotalControllers.containsKey(newOrder.orderId)) {
       _orderTotalControllers[newOrder.orderId]!.add(newOrder.total);
@@ -84,6 +105,8 @@ class CartSharedPreferences {
     _sharedPreferences.setString(_cartKey, jsonEncode(orders));
     _controller.add(orders.length);
     _subTotalController.add(subTotal);
+    _surchargeController.add(surcharge);
+    _grandTotalController.add(grandTotal);
 
     if (_orderTotalControllers.containsKey(newOrder.orderId)) {
       _orderTotalControllers[newOrder.orderId]!.add(newOrder.total);

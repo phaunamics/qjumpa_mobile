@@ -9,7 +9,7 @@ import 'package:qjumpa/src/data/local_storage/cart_shared_preferences.dart';
 import 'package:qjumpa/src/domain/entity/arguments.dart';
 import 'package:qjumpa/src/domain/entity/order_entity.dart';
 import 'package:qjumpa/src/presentation/product_scan/bloc/barcodescanner_bloc.dart';
-import 'package:qjumpa/src/presentation/product_search/product_search_screen_.dart';
+import 'package:qjumpa/src/presentation/widgets/bottom_nav/product_search_nav_bar.dart';
 import 'package:qjumpa/src/presentation/widgets/custom_badge.dart';
 import 'package:qjumpa/src/presentation/widgets/ios_scanner_view.dart';
 import 'package:qjumpa/src/presentation/widgets/large_button.dart';
@@ -172,9 +172,11 @@ class _ProductScanScreenState extends State<ProductScanScreen> {
                   ),
                   Center(
                     child: GestureDetector(
-                      onTap: () => Navigator.pushReplacementNamed(
-                          context, ProductSearchScreen.routeName,
-                          arguments: widget.arguments.storeEntity),
+                      onTap: () => Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ProductSearchBottomNavBar(
+                                  storeEntity: widget.arguments.storeEntity!))),
                       child: Text(
                         'Manually search ',
                         style: TextStyle(

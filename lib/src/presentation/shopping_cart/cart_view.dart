@@ -29,6 +29,12 @@ class _CartViewState extends State<CartView> {
   void checkIfUserIsLoggedIn() {
     if (_auth.currentUser != null) {
       showModalBottomSheet(
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(12),
+            topRight: Radius.circular(12),
+          ),
+        ),
         context: context,
         builder: (context) => const PaystackPaymentChannel(),
       );
@@ -70,27 +76,67 @@ class _CartViewState extends State<CartView> {
                     SizedBox(
                       height: screenHeight / 54,
                     ),
-                    Expanded(child: shoopingCartListView(screenHeight)),
+                    Expanded(child: shoppingCartListView(screenHeight)),
                     Divider(
                       height: screenHeight / 98,
                       thickness: 1,
                       color: Colors.black,
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    Column(
                       children: [
-                        const Text(
-                          'Total',
-                          style: TextStyle(
-                              fontSize: 22, fontWeight: FontWeight.w600),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              'Subtotal',
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.w400),
+                            ),
+                            StreamBuilder<int>(
+                              stream: cartSharedPref.subTotalStream,
+                              builder: (context, snapshot) {
+                                return subTotalCard(
+                                    value: snapshot.data ??
+                                        cartSharedPref.subTotal);
+                              },
+                            ),
+                          ],
                         ),
-                        StreamBuilder<int>(
-                          stream: cartSharedPref.subTotalStream,
-                          builder: (context, snapshot) {
-                            return subTotalCard(
-                                value:
-                                    snapshot.data ?? cartSharedPref.subTotal);
-                          },
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              'Surcharge',
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.w400),
+                            ),
+                            StreamBuilder<double>(
+                              stream: cartSharedPref.surchargeStream,
+                              builder: (context, snapshot) {
+                                return surChargeCard(
+                                    value: snapshot.data ??
+                                        cartSharedPref.surcharge);
+                              },
+                            ),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              'Grand Total',
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.w400),
+                            ),
+                            StreamBuilder<double>(
+                              stream: cartSharedPref.grandTotalStream,
+                              builder: (context, snapshot) {
+                                return grandTotalCard(
+                                    value: snapshot.data ??
+                                        cartSharedPref.grandTotal);
+                              },
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -120,11 +166,25 @@ class _CartViewState extends State<CartView> {
   Widget subTotalCard({required int value}) {
     return Text(
       NumberFormat.currency(symbol: '₦ ').format(value),
+      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
+    );
+  }
+
+  Widget surChargeCard({required double value}) {
+    return Text(
+      NumberFormat.currency(symbol: '₦ ').format(value),
+      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
+    );
+  }
+
+  Widget grandTotalCard({required double value}) {
+    return Text(
+      NumberFormat.currency(symbol: '₦ ').format(value),
       style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
     );
   }
 
-  Widget shoopingCartListView(double screenHeight) {
+  Widget shoppingCartListView(double screenHeight) {
     return SizedBox(
       height: screenHeight / 1.43,
       child: StreamBuilder<int>(
@@ -173,29 +233,28 @@ class _CartViewState extends State<CartView> {
   AwesomeDialog loginRequestPopUp(BuildContext context) {
     return AwesomeDialog(
       context: context,
-      dialogType: DialogType.info,
+      dialogType: DialogType.noHeader,
       animType: AnimType.scale,
-      padding: const EdgeInsets.only(bottom: 6),
+      padding: const EdgeInsets.all(6),
       desc: 'Please login or register to proceed to payment',
-      btnOk: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 20),
-        decoration: BoxDecoration(
-            color: HexColor(primaryColor),
-            borderRadius: BorderRadius.circular(8)),
-        child: ElevatedButton(
-          onPressed: () => Navigator.pushReplacementNamed(
-              context, LoginView.routeName,
-              arguments: ModalRoute.of(context)!.settings.name),
-          style: ButtonStyle(
-            side: MaterialStateProperty.all(BorderSide.none),
-            backgroundColor: MaterialStateProperty.all(
-              HexColor(primaryColor),
+      btnOk: GestureDetector(
+        onTap: () => Navigator.pushReplacementNamed(
+            context, LoginView.routeName,
+            arguments: ModalRoute.of(context)!.settings.name),
+        child: Container(
+          height: 55,
+          margin: const EdgeInsets.symmetric(horizontal: 20),
+          decoration: BoxDecoration(
+              color: HexColor(primaryColor),
+              borderRadius: BorderRadius.circular(8)),
+          child: const Center(
+            child: Text(
+              'Login',
+              style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.white),
             ),
-          ),
-          child: const Text(
-            'Login',
-            style: TextStyle(
-                fontSize: 14, fontWeight: FontWeight.w500, color: Colors.white),
           ),
         ),
       ),

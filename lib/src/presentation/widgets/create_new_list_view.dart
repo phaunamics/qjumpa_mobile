@@ -119,7 +119,7 @@ class _CreateNewListViewState extends State<CreateNewListView> {
           ),
         ),
         SizedBox(
-          height: screenHeight / 23,
+          height: screenHeight / 32,
         ),
         LargeBtn(
           onTap: () {
@@ -181,28 +181,27 @@ class _CreateNewListViewState extends State<CreateNewListView> {
   AwesomeDialog loginRequestPopUp(BuildContext context) {
     return AwesomeDialog(
       context: context,
-      dialogType: DialogType.info,
+      dialogType: DialogType.noHeader,
       animType: AnimType.scale,
-      padding: const EdgeInsets.only(bottom: 6),
+      padding: const EdgeInsets.all(6),
       desc: 'Please login or register to create shopping list',
-      btnOk: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 20),
-        decoration: BoxDecoration(
-            color: HexColor(primaryColor),
-            borderRadius: BorderRadius.circular(8)),
-        child: ElevatedButton(
-          onPressed: () =>
-              Navigator.pushReplacementNamed(context, LoginView.routeName),
-          style: ButtonStyle(
-            side: MaterialStateProperty.all(BorderSide.none),
-            backgroundColor: MaterialStateProperty.all(
-              HexColor(primaryColor),
+      btnOk: GestureDetector(
+        onTap: () =>
+            Navigator.pushReplacementNamed(context, LoginView.routeName),
+        child: Container(
+          height: 55,
+          margin: const EdgeInsets.symmetric(horizontal: 20),
+          decoration: BoxDecoration(
+              color: HexColor(primaryColor),
+              borderRadius: BorderRadius.circular(8)),
+          child: const Center(
+            child: Text(
+              'Login',
+              style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.white),
             ),
-          ),
-          child: const Text(
-            'Login',
-            style: TextStyle(
-                fontSize: 14, fontWeight: FontWeight.w500, color: Colors.white),
           ),
         ),
       ),

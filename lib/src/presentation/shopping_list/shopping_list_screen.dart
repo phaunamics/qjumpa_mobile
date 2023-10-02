@@ -56,8 +56,10 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
                             fontWeight: FontWeight.w400,
                             color: Colors.black.withOpacity(0.5)),
                         GestureDetector(
-                          onTap: () => Navigator.pushNamed(
-                              context, ProfileScreen.routeName),
+                          onTap: () => _auth.currentUser == null
+                              ? null
+                              : Navigator.pushNamed(
+                                  context, ProfileScreen.routeName),
                           child: customText(
                             text:
                                 '@${_auth.currentUser?.email?.split('@')[0]} >>',

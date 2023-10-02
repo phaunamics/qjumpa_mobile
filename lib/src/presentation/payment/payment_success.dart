@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:qjumpa/src/core/constants.dart';
 import 'package:qjumpa/src/core/hex_converter.dart';
-import 'package:qjumpa/src/presentation/shopping_list/shopping_list_screen.dart';
+import 'package:qjumpa/src/presentation/widgets/bottom_nav/shopping_list_nav_bar.dart';
 
 class PaymentSuccess extends StatelessWidget {
   const PaymentSuccess({super.key, required this.successMessage});
@@ -18,7 +18,7 @@ class PaymentSuccess extends StatelessWidget {
               SizedBox(height: MediaQuery.of(context).size.height * 0.1),
               Image.network(
                 "https://res.cloudinary.com/iamvictorsam/image/upload/v1671834054/Capture_inlcff.png",
-                height: MediaQuery.of(context).size.height * 0.4, //40%
+                height: MediaQuery.of(context).size.height * 0.4,
               ),
               SizedBox(height: MediaQuery.of(context).size.height * 0.08),
               Text(successMessage,
@@ -36,7 +36,7 @@ class PaymentSuccess extends StatelessWidget {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const ShoppingListScreen()));
+                            builder: (context) => const ShoppingListNavBar()));
                   },
                   style: ElevatedButton.styleFrom(
                       // foregroundColor: Colors.white,

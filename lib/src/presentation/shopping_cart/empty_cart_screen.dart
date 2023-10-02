@@ -11,12 +11,12 @@ class EmptyCartScreen extends StatelessWidget {
     var screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Stack(
         children: [
           Positioned(
             top: screenHeight / 15,
-            child: Container(
-              color: Colors.white.withOpacity(0.4),
+            child: SizedBox(
               width: screenWidth,
               height: screenHeight,
               child: Column(
@@ -37,7 +37,9 @@ class EmptyCartScreen extends StatelessWidget {
                   SizedBox(
                     height: screenHeight / 9,
                   ),
-                  const Image(image: AssetImage('assets/empty_cart.jpeg'),),
+                  const Image(
+                    image: AssetImage('assets/empty_cart.jpeg'),
+                  ),
                   const Text(
                     'Your cart is empty',
                     style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600),

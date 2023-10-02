@@ -33,11 +33,14 @@ class _PaystackPaymentChannelState extends State<PaystackPaymentChannel> {
   }
 
   checkout() async {
-    int price = int.parse(cartSharedPref.subTotal.toString()) * 100;
+    int grandTotal = (cartSharedPref.grandTotal.round()) * 100;
     Charge charge = Charge()
-      ..amount = price
-      ..reference = UUIDGenerator.uniqueRefenece(12)
+      ..amount = grandTotal
+      ..reference = UUIDGenerator.uniqueRefenece(4)
       ..email = auth.currentUser?.email
+      ..subAccount = ''
+      ..bearer = Bearer.SubAccount
+      ..transactionCharge = 99.7.round()
       ..currency = "NGN";
     CheckoutResponse response = await plugin.checkout(
       context,
@@ -50,8 +53,9 @@ class _PaystackPaymentChannelState extends State<PaystackPaymentChannel> {
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
-              builder: (context) =>
-                  PaymentSuccess(successMessage: successMessage)),
+            builder: (context) =>
+                PaymentSuccess(successMessage: successMessage),
+          ),
           ModalRoute.withName('/'));
     } else {
       //implement payment failure
