@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:qjumpa/injection.dart';
-import 'package:qjumpa/src/core/constants.dart';
-import 'package:qjumpa/src/core/hex_converter.dart';
+import 'package:qjumpa/src/core/utils/constants.dart';
+import 'package:qjumpa/src/core/utils/hex_converter.dart';
 import 'package:qjumpa/src/data/local_storage/cart_shared_preferences.dart';
 import 'package:qjumpa/src/domain/entity/order_entity.dart';
 
@@ -44,7 +44,7 @@ class _ItemCardState extends State<ItemCard> {
     return Column(
       children: [
         Container(
-          height: screenHeight / 8.6,
+          height: screenHeight <= 667 ? screenHeight / 7.3 : screenHeight / 8.6,
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(15),
               color: HexColor(ctnColor)),
@@ -140,6 +140,7 @@ class _ItemCardState extends State<ItemCard> {
           stream: cartSharedPref.getOrderTotalStream(widget.order.orderId),
           builder: (context, snapshot) {
             return totalCard(
+              screenWidth: screenWidth,
               value: snapshot.data ?? widget.order.price * _qty,
             );
           },
@@ -148,9 +149,9 @@ class _ItemCardState extends State<ItemCard> {
     );
   }
 
-  Widget totalCard({required int value}) {
+  Widget totalCard({required int value, double? screenWidth}) {
     return Padding(
-      padding: const EdgeInsets.only(right: 22.0),
+      padding: EdgeInsets.only(right: screenWidth! <= 375 ? 17 : 22.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [

@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
-import 'package:qjumpa/src/core/dio_client.dart';
-import 'package:qjumpa/src/core/firebase_auth.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:qjumpa/src/core/services/dio_client.dart';
+import 'package:qjumpa/src/core/services/firebase_auth.dart';
+import 'package:qjumpa/src/core/utils/network_info.dart';
 import 'package:qjumpa/src/data/data_sources/get_inventory_remote_data_src.dart';
 import 'package:qjumpa/src/data/data_sources/get_store_remote_data_src.dart';
 import 'package:qjumpa/src/data/local_storage/cart_shared_preferences.dart';
@@ -41,6 +43,7 @@ Future<void> init() async {
   // Core
   sl.registerLazySingleton<DioClient>(() => DioClient());
   sl.registerLazySingleton<Auth>(() => Auth(sl.get()));
+  sl.registerLazySingleton(() => InternetConnectionChecker());
 
   //Repo
   sl.registerLazySingleton<InventoryRepository>(() => InventoryImpl(sl.get()));
@@ -56,4 +59,6 @@ Future<void> init() async {
       () => ShoppingListSharedPreferences(
             sl.get(),
           ));
+  //network info
+  sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl.get()));
 }

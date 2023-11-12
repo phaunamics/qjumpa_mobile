@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:qjumpa/injection.dart';
-import 'package:qjumpa/src/core/constants.dart';
-import 'package:qjumpa/src/core/hex_converter.dart';
+import 'package:qjumpa/src/core/utils/constants.dart';
+import 'package:qjumpa/src/core/utils/hex_converter.dart';
 import 'package:qjumpa/src/data/local_storage/cart_shared_preferences.dart';
 import 'package:qjumpa/src/domain/entity/order_entity.dart';
 

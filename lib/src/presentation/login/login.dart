@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qjumpa/injection.dart';
-import 'package:qjumpa/src/core/firebase_auth.dart';
+import 'package:qjumpa/src/core/services/firebase_auth.dart';
 import 'package:qjumpa/src/presentation/login/login_view.dart';
 import 'package:qjumpa/src/presentation/shopping_cart/cart.dart';
 import 'package:qjumpa/src/presentation/widgets/bottom_nav/shopping_list_nav_bar.dart';

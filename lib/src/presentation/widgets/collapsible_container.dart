@@ -78,6 +78,7 @@ class _CollapsibleListViewState extends State<CollapsibleListView> {
         children: [
           ExpansionPanel(
             canTapOnHeader: true,
+            backgroundColor: Colors.white,
             headerBuilder: (BuildContext context, bool isExpanded) {
               return ListTile(
                 title: Text(widget.item.title),

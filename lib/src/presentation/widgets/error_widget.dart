@@ -18,12 +18,15 @@ class CustomErrorWidget extends StatelessWidget {
     return Column(
       children: [
         SizedBox(
-          height: screenHeight / 4.3,
+          height: screenHeight / 4,
         ),
-        Center(
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(30),
-            child: Image.asset(imageUrl),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 10.0),
+          child: Center(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(30),
+              child: Image.asset(imageUrl),
+            ),
           ),
         ),
         Text(
@@ -33,6 +36,7 @@ class CustomErrorWidget extends StatelessWidget {
         ),
         Text(
           subText ?? '',
+          textAlign: TextAlign.center,
           style: const TextStyle(fontSize: 15),
         ),
       ],

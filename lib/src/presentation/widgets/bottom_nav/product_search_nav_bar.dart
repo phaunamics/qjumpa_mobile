@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:qjumpa/src/core/constants.dart';
-import 'package:qjumpa/src/core/hex_converter.dart';
+import 'package:qjumpa/src/core/utils/constants.dart';
+import 'package:qjumpa/src/core/utils/hex_converter.dart';
 import 'package:qjumpa/src/domain/entity/store_entity.dart';
 import 'package:qjumpa/src/presentation/product_search/product_search_screen_.dart';
 import 'package:qjumpa/src/presentation/select_store/select_store_screen.dart';

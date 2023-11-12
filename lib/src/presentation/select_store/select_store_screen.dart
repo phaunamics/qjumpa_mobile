@@ -6,9 +6,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:qjumpa/injection.dart';
-import 'package:qjumpa/src/core/constants.dart';
-import 'package:qjumpa/src/core/hex_converter.dart';
-import 'package:qjumpa/src/core/usecase.dart';
+import 'package:qjumpa/src/core/utils/constants.dart';
+import 'package:qjumpa/src/core/utils/hex_converter.dart';
+import 'package:qjumpa/src/core/utils/network_info.dart';
+import 'package:qjumpa/src/core/utils/usecase.dart';
 import 'package:qjumpa/src/data/local_storage/cart_shared_preferences.dart';
 import 'package:qjumpa/src/domain/entity/exception.dart';
 import 'package:qjumpa/src/domain/entity/order_entity.dart';
@@ -36,6 +37,7 @@ class _SelectStoreScreenState extends State<SelectStoreScreen> {
   final getBarcodeScannerbloc = sl.get<BarcodeScannerBloc>();
   final getstore = sl.get<GetStoreUseCase>();
   final _cartSharedPref = sl.get<CartSharedPreferences>();
+  final networkInfo = sl.get<NetworkInfo>();
 
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
@@ -112,7 +114,7 @@ class _SelectStoreScreenState extends State<SelectStoreScreen> {
             bloc: getBarcodeScannerbloc,
             builder: (context, state) {
               if (state is BarcodescannerInitial) {
-                initialBuild(screenHeight, context);
+                initialBuild(screenHeight, context, screenWidth);
               }
               if (state is BarcodescannerCompleted) {
                 productScanView(
@@ -122,7 +124,7 @@ class _SelectStoreScreenState extends State<SelectStoreScreen> {
                     storeEntity: _dropdownValue,
                     order: state.inventory.order);
               }
-              return initialBuild(screenHeight, context);
+              return initialBuild(screenHeight, context, screenWidth);
             },
           ),
         ),
@@ -130,12 +132,12 @@ class _SelectStoreScreenState extends State<SelectStoreScreen> {
     );
   }
 
-  Stack initialBuild(double screenHeight, BuildContext context) {
+  Stack initialBuild(
+      double screenHeight, BuildContext context, double screenWidth) {
     return Stack(
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
-          //ui implementation for dropdown menu showcasing different stores
           child: FutureBuilder(
             future: getstore.call(NoParams()),
             builder: (context, snapshot) {
@@ -201,57 +203,120 @@ class _SelectStoreScreenState extends State<SelectStoreScreen> {
                         ),
                       ),
                       SizedBox(
-                        height: screenHeight / 20,
+                        height: screenWidth <= 375
+                            ? screenHeight / 36
+                            : screenHeight / 20,
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "Not shopping now? Make a",
-                            style: TextStyle(
-                                fontSize: 15, color: HexColor(fontColor)),
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const ShoppingListNavBar()));
-                            },
-                            child: const SizedBox(
-                              child: Text(
-                                " shopping list >>",
-                                style: TextStyle(
-                                    fontSize: 15,
-                                    decoration: TextDecoration.underline,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold),
-                              ),
+                      screenWidth <= 375
+                          ? Column(
+                              children: [
+                                Text(
+                                  "Not shopping now?",
+                                  style: TextStyle(
+                                      fontSize: 15, color: HexColor(fontColor)),
+                                ),
+                                SizedBox(
+                                  height: screenHeight / 86,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text('Make a',
+                                        style: TextStyle(
+                                            fontSize: 15,
+                                            color: HexColor(fontColor))),
+                                    GestureDetector(
+                                      onTap: () {
+                                        Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                const ShoppingListNavBar(),
+                                          ),
+                                        );
+                                      },
+                                      child: const SizedBox(
+                                        child: Text(
+                                          " shopping list >>",
+                                          style: TextStyle(
+                                              fontSize: 15,
+                                              decoration:
+                                                  TextDecoration.underline,
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              ],
+                            )
+                          : Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "Not shopping now? Make a",
+                                  style: TextStyle(
+                                      fontSize: 15, color: HexColor(fontColor)),
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const ShoppingListNavBar(),
+                                      ),
+                                    );
+                                  },
+                                  child: const SizedBox(
+                                    child: Text(
+                                      " shopping list >>",
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          decoration: TextDecoration.underline,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                        ],
-                      )
                     ],
                   ),
                 );
-              } else if (snapshot.hasError) {
-                if (snapshot.error is ServerError) {
-                  return const CustomErrorWidget(
-                    imageUrl: 'assets/server_error.png',
-                    text:
-                        'Oops... We hoped you would never get to see this page and we are working hard to make sure you never see it again.',
-                  );
-                } else if (snapshot.error is NoInternetException) {
-                  return const CustomErrorWidget(
+              }
+              if (snapshot.hasError) {
+                if (snapshot.error is NoInternetException) {
+                  NoInternetException noInternetException =
+                      snapshot.error as NoInternetException;
+                  return CustomErrorWidget(
                     imageUrl: 'assets/network_error.jpg',
-                    text: 'In this case, it’s not us, it’s you 👀',
-                    subText:
-                        'Please check your internet connection and try again.',
+                    text: noInternetException.message,
+                    subText: noInternetExceptionMsgSubtext,
                   );
-                } else {
-                  return const SizedBox();
                 }
+                if (snapshot.error is ServerError) {
+                  ServerError serverError = snapshot.error as ServerError;
+                  return CustomErrorWidget(
+                    imageUrl: 'assets/server_error.png',
+                    text: serverError.message,
+                  );
+                }
+                if (snapshot.error is NoServiceFoundException) {
+                  NoServiceFoundException noServiceFoundException =
+                      snapshot.error as NoServiceFoundException;
+                  return CustomErrorWidget(
+                    imageUrl: 'assets/network_error.jpg',
+                    text: noServiceFoundException.message,
+                  );
+                }
+                UnknownException unknownException =
+                    snapshot.error as UnknownException;
+                return CustomErrorWidget(
+                  imageUrl: 'assets/server_error.png',
+                  text: unknownException.message,
+                );
               } else {
                 return Center(
                   child: Column(

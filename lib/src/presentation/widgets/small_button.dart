@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:qjumpa/src/core/constants.dart';
-import 'package:qjumpa/src/core/hex_converter.dart';
+import 'package:qjumpa/src/core/utils/constants.dart';
+import 'package:qjumpa/src/core/utils/hex_converter.dart';
 
 class SmallBtn extends StatelessWidget {
   final String text;

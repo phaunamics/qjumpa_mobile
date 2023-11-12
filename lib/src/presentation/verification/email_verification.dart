@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:qjumpa/injection.dart';
-import 'package:qjumpa/src/core/constants.dart';
-import 'package:qjumpa/src/core/firebase_auth.dart';
-import 'package:qjumpa/src/core/hex_converter.dart';
+import 'package:qjumpa/src/core/utils/constants.dart';
+import 'package:qjumpa/src/core/services/firebase_auth.dart';
+import 'package:qjumpa/src/core/utils/hex_converter.dart';
 import 'package:qjumpa/src/presentation/widgets/bottom_nav/shopping_list_nav_bar.dart';
 import 'package:qjumpa/src/presentation/widgets/small_button.dart';
 

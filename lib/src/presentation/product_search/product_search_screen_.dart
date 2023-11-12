@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:qjumpa/injection.dart';
-import 'package:qjumpa/src/core/constants.dart';
-import 'package:qjumpa/src/core/hex_converter.dart';
+import 'package:qjumpa/src/core/utils/constants.dart';
+import 'package:qjumpa/src/core/utils/hex_converter.dart';
 import 'package:qjumpa/src/data/local_storage/cart_shared_preferences.dart';
 import 'package:qjumpa/src/domain/entity/order_entity.dart';
 import 'package:qjumpa/src/domain/entity/store_entity.dart';
@@ -152,7 +152,11 @@ class _ProductSearchScreenState extends State<ProductSearchScreen> {
                         final inventory = state.inventory![index];
 
                         return Padding(
-                          padding: const EdgeInsets.fromLTRB(6.0, 10, 6, 6),
+                          padding: EdgeInsets.fromLTRB(
+                              screenWidth <= 375 ? 1 : 3.0,
+                              10,
+                              screenWidth <= 375 ? 1 : 3.0,
+                              6),
                           child: SearchResultCard(
                             order: inventory.order,
                           ),
@@ -210,7 +214,7 @@ class _ProductSearchScreenState extends State<ProductSearchScreen> {
     return Stack(
       children: [
         Positioned(
-          top: screenHeight / 15,
+          top: screenHeight <= 667 ? screenHeight / 28 : screenHeight / 15,
           child: SizedBox(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
@@ -234,11 +238,13 @@ class _ProductSearchScreenState extends State<ProductSearchScreen> {
                     ],
                   ),
                   SizedBox(
-                    height: screenHeight / 11.4,
+                    height: screenHeight <= 667
+                        ? screenHeight / 16
+                        : screenHeight / 11.4,
                   ),
                   CustomTextFormField(
                       hint: 'Search by product name',
-                      label: '',
+                      label: null,
                       focus: true,
                       hintFontSize: 16,
                       onChanged: (value) {
@@ -255,7 +261,8 @@ class _ProductSearchScreenState extends State<ProductSearchScreen> {
                       value: false),
                   widget,
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                    padding: EdgeInsets.symmetric(
+                        horizontal: screenWidth <= 375 ? 5 : 10.0),
                     child: Row(
                       children: [
                         const Text(

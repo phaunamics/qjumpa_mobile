@@ -3,10 +3,15 @@ const fontColor = '#7E7E7E';
 const ctnColor = '#D4EFDF';
 const selectedTabBarColor = '#64C0F0';
 const counterColor = '#05172C';
+const serverErrorMsg =
+    'Oops... We hoped you would never get to see this page and we are working hard to make sure you never see it again.';
+const noInternetExceptionMsg = 'In this case, it’s not us, it’s you 👀';
+const noInternetExceptionMsgSubtext =
+    'Please check your internet\nconnection and try again.';
 String inventoryEndpoint(String storeId) =>
-    'https://62f0-2603-8001-b102-35ba-8494-d05d-a15c-a221.ngrok-free.app/api/users/$storeId/products';
+    'https://616e-2603-8001-b102-35ba-9aaa-1602-2f6e-d1ad.ngrok-free.app/api/stores/$storeId/products';
 const String storeEndPoint =
-    'https://62f0-2603-8001-b102-35ba-8494-d05d-a15c-a221.ngrok-free.app/api/users';
+    'https://616e-2603-8001-b102-35ba-9aaa-1602-2f6e-d1ad.ngrok-free.app/api/stores';
 const String initialTransactionUrl =
     'https://api.paystack.co/transaction/initialize';
 String verifyTransactionUrl(String reference) =>

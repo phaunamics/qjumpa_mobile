@@ -2,14 +2,14 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:qjumpa/injection.dart';
-import 'package:qjumpa/src/core/constants.dart';
-import 'package:qjumpa/src/core/firebase_auth.dart';
-import 'package:qjumpa/src/core/hex_converter.dart';
+import 'package:qjumpa/src/core/utils/constants.dart';
+import 'package:qjumpa/src/core/services/firebase_auth.dart';
+import 'package:qjumpa/src/core/utils/hex_converter.dart';
 import 'package:qjumpa/src/data/local_storage/cart_shared_preferences.dart';
 import 'package:qjumpa/src/domain/entity/order_entity.dart';
 import 'package:qjumpa/src/presentation/login/login_view.dart';
 import 'package:qjumpa/src/presentation/payment/paystack_payment_channel.dart';
-import 'package:qjumpa/src/presentation/widgets/shopping_cart_item_card.dart';
+import 'package:qjumpa/src/presentation/widgets/item_card.dart';
 import 'package:qjumpa/src/presentation/widgets/small_button.dart';
 
 class CartView extends StatefulWidget {
@@ -204,7 +204,6 @@ class _CartViewState extends State<CartView> {
               },
             );
           } else {
-            // Show an empty SizedBox when the cart is empty
             return Column(
               children: [
                 const Image(

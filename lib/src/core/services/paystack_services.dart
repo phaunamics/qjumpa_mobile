@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:qjumpa/injection.dart';
-import 'package:qjumpa/src/core/constants.dart';
-import 'package:qjumpa/src/core/dio_client.dart';
+import 'package:qjumpa/src/core/utils/constants.dart';
+import 'package:qjumpa/src/core/services/dio_client.dart';
 import 'package:qjumpa/src/domain/entity/paystack_auth.dart';
 import 'package:qjumpa/src/domain/entity/paystack_response.dart';
 import 'package:qjumpa/src/domain/entity/transaction.dart';

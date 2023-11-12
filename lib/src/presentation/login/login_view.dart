@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:qjumpa/injection.dart';
 import 'package:qjumpa/main.dart';
-import 'package:qjumpa/src/core/constants.dart';
-import 'package:qjumpa/src/core/firebase_auth.dart';
-import 'package:qjumpa/src/core/hex_converter.dart';
+import 'package:qjumpa/src/core/services/firebase_auth.dart';
+import 'package:qjumpa/src/core/utils/constants.dart';
+import 'package:qjumpa/src/core/utils/hex_converter.dart';
 import 'package:qjumpa/src/presentation/register_user/register_screen.dart';
 import 'package:qjumpa/src/presentation/update_password/update_password_screen.dart';
 import 'package:qjumpa/src/presentation/widgets/custom_textformfield.dart';
@@ -170,7 +170,7 @@ class _LoginViewState extends State<LoginView> {
     return Scaffold(
         body: Stack(children: [
       Positioned(
-        top: screenHeight / 15,
+        top: screenHeight <= 667 ? screenHeight / 34 : screenHeight / 15,
         child: Container(
           color: Colors.white,
           width: MediaQuery.of(context).size.width,

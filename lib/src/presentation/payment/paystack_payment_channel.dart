@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_paystack/flutter_paystack.dart';
 import 'package:qjumpa/injection.dart';
-import 'package:qjumpa/src/core/constants.dart';
-import 'package:qjumpa/src/core/firebase_auth.dart';
-import 'package:qjumpa/src/core/hex_converter.dart';
-import 'package:qjumpa/src/core/uuid_generator.dart';
+import 'package:qjumpa/src/core/utils/constants.dart';
+import 'package:qjumpa/src/core/services/firebase_auth.dart';
+import 'package:qjumpa/src/core/utils/hex_converter.dart';
+import 'package:qjumpa/src/core/utils/uuid_generator.dart';
 import 'package:qjumpa/src/data/local_storage/cart_shared_preferences.dart';
 import 'package:qjumpa/src/domain/entity/enums.dart';
 import 'package:qjumpa/src/domain/entity/secret_key.dart';

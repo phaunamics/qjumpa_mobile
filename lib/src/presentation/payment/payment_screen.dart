@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:qjumpa/src/core/paystack_services.dart';
+import 'package:qjumpa/src/core/services/paystack_services.dart';
 import 'package:qjumpa/src/domain/entity/paystack_auth.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 

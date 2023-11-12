@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:qjumpa/src/presentation/shopping_cart/cart.dart';
-import 'package:qjumpa/src/presentation/widgets/barcode_overlay.dart';
+import 'package:qjumpa/src/presentation/widgets/barcode_scanner_overlay.dart';
 
 class IOSScannerView extends StatefulWidget {
   static const routeName = '/ios_scan_view';

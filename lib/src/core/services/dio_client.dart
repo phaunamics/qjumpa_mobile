@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:qjumpa/src/core/utils/constants.dart';
 import 'package:qjumpa/src/domain/entity/exception.dart';
 import 'package:qjumpa/src/domain/entity/paystack_response.dart';
 import 'package:qjumpa/src/domain/entity/secret_key.dart';
@@ -11,6 +13,8 @@ class DioClient {
       validateStatus: (status) {
         return true;
       },
+      connectTimeout: const Duration(seconds: 3000),
+      receiveTimeout: const Duration(seconds: 3000),
       followRedirects: false,
       headers: {
         "Accept": "application/json",
@@ -21,21 +25,6 @@ class DioClient {
   }
 
   late Dio dio;
-
-  // initDio() {
-  //   dio.interceptors.add(MockInterceptor());
-  // }
-
-  // Future<Map<String, dynamic>> get(String endPoint) async {
-  //   try {
-  //     final response = await dio.get(endPoint);
-  //     // print('status code is ${response.statusCode}');
-  //     return response.data;
-  //   } on DioError catch (err) {
-  //     throw ('The error is $err');
-  //   }
-  // }
-
   Future<Map<String, dynamic>> get(String endPoint) async {
     try {
       final response = await dio.get(endPoint);
@@ -43,19 +32,32 @@ class DioClient {
         return response.data;
       } else if (response.statusCode == 503) {
         throw ServerError(
-          message: 'Server returned error status: ${response.statusCode}',
+          message: serverErrorMsg,
         );
       } else {
-        throw NoInternetException(message: 'No internet connection');
+        throw NoInternetException(
+            message: noInternetExceptionMsg,
+            subText: noInternetExceptionMsgSubtext);
       }
     } on DioError catch (err) {
       if (err.type == DioErrorType.connectionError ||
           err.type == DioErrorType.sendTimeout ||
-          err.type == DioErrorType.receiveTimeout) {
-        throw NoInternetException(message: 'No internet connection');
+          err.type == DioErrorType.receiveTimeout ||
+          err.type == DioErrorType.unknown) {
+        throw NoInternetException(
+            message: noInternetExceptionMsg,
+            subText: noInternetExceptionMsgSubtext);
+      } else if (err.type == DioErrorType.badResponse) {
+        throw ServerError(message: serverErrorMsg);
       } else {
-        throw ServerError(message: 'An error occurred: ${err.message}');
+        throw NoInternetException(
+            message: noInternetExceptionMsg,
+            subText: noInternetExceptionMsgSubtext);
       }
+    } on SocketException {
+      throw NoInternetException(
+          message: noInternetExceptionMsg,
+          subText: noInternetExceptionMsgSubtext);
     }
   }
 

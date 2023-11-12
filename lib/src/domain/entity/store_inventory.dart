@@ -2,12 +2,11 @@ import 'order_entity.dart';
 
 class Inventory {
   int? id;
-  int? userId;
+  int? storeId;
   String? name;
   String? sku;
   int? price;
-  int? stock;
-  String? photo;
+  String? photoUrl;
   DateTime? lastPurchasedAt;
   String? createdAt;
   String? updatedAt;
@@ -24,24 +23,22 @@ class Inventory {
 
   Inventory(
       {this.id,
-      this.userId,
+      this.storeId,
       this.name,
       this.sku,
       this.price,
-      this.stock,
-      this.photo,
+      this.photoUrl,
       this.lastPurchasedAt,
       this.createdAt,
       this.updatedAt});
 
   Inventory.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    userId = json['user_id'];
+    storeId = json['user_id'];
     name = json['name'];
     sku = json['sku'];
     price = json['price'];
-    stock = json['stock'];
-    photo = json['photo'];
+    photoUrl = json['photo'];
     lastPurchasedAt = json['last_purchased_at'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
@@ -50,12 +47,11 @@ class Inventory {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
-    data['user_id'] = userId;
+    data['user_id'] = storeId;
     data['name'] = name;
     data['sku'] = sku;
     data['price'] = price;
-    data['stock'] = stock;
-    data['photo'] = photo;
+    data['photo'] = photoUrl;
     data['last_purchased_at'] = lastPurchasedAt ?? '';
     data['created_at'] = createdAt ?? '';
     data['updated_at'] = updatedAt;
@@ -64,6 +60,6 @@ class Inventory {
 
   @override
   String toString() {
-    return 'Inventory{id: $id,name: $name,price: $price,sku: $sku,stock: $stock}';
+    return 'Inventory{id: $id,name: $name,price: $price,sku: $sku}';
   }
 }

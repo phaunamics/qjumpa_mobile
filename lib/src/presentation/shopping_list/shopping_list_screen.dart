@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:qjumpa/injection.dart';
-import 'package:qjumpa/src/core/constants.dart';
-import 'package:qjumpa/src/core/firebase_auth.dart';
-import 'package:qjumpa/src/core/hex_converter.dart';
+import 'package:qjumpa/src/core/utils/constants.dart';
+import 'package:qjumpa/src/core/services/firebase_auth.dart';
+import 'package:qjumpa/src/core/utils/hex_converter.dart';
 import 'package:qjumpa/src/data/local_storage/item_shared_preferences.dart';
 import 'package:qjumpa/src/presentation/profile/profile_screen.dart';
 import 'package:qjumpa/src/presentation/shopping_list/create_new_list.dart';
@@ -24,6 +24,7 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
   Widget build(BuildContext context) {
     var screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Stack(
         children: [
           Positioned(
@@ -33,7 +34,7 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: screenHeight / 41.0),
+                padding: EdgeInsets.symmetric(horizontal: screenHeight / 41.0), 
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -95,9 +96,12 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Text(
-                            'Create a New List',
-                            style: TextStyle(fontSize: 18),
+                          const Padding(
+                            padding: EdgeInsets.only(left: 32.0),
+                            child: Text(
+                              'Create a New List',
+                              style: TextStyle(fontSize: 18),
+                            ),
                           ),
                           SizedBox(
                             width: screenHeight / 25,

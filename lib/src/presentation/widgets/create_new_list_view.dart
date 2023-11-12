@@ -1,9 +1,9 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:qjumpa/injection.dart';
-import 'package:qjumpa/src/core/constants.dart';
-import 'package:qjumpa/src/core/firebase_auth.dart';
-import 'package:qjumpa/src/core/hex_converter.dart';
+import 'package:qjumpa/src/core/services/firebase_auth.dart';
+import 'package:qjumpa/src/core/utils/constants.dart';
+import 'package:qjumpa/src/core/utils/hex_converter.dart';
 import 'package:qjumpa/src/data/local_storage/item_shared_preferences.dart';
 import 'package:qjumpa/src/domain/entity/shopping_list_entity.dart';
 import 'package:qjumpa/src/presentation/login/login_view.dart';
@@ -46,14 +46,6 @@ class _CreateNewListViewState extends State<CreateNewListView> {
 
     return itemBodies;
   }
-  //  void checkIfUserIsLoggedIn() {
-  //   if (_auth.currentUser != null) {
-  //     Navigator.pushReplacement(context,
-  //         MaterialPageRoute(builder: (context) => const ShoppingListNavBar()));
-  //   } else {
-  //     loginRequestPopUp(context).show();
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +66,7 @@ class _CreateNewListViewState extends State<CreateNewListView> {
           ],
         ),
         SizedBox(
-          height: screenHeight / 76,
+          height: screenHeight <= 667 ? screenHeight / 200 : screenHeight / 76,
         ),
         Form(
           key: _formKey,
@@ -98,7 +90,9 @@ class _CreateNewListViewState extends State<CreateNewListView> {
                 textInputAction: TextInputAction.done,
               ),
               SizedBox(
-                height: screenHeight / 78,
+                height: screenHeight <= 667
+                    ? screenHeight / 170
+                    : screenHeight / 78,
               ),
               TextFormField(
                 controller: _listcontroller,

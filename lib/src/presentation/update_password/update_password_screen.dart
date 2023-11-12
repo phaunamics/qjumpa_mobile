@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:qjumpa/injection.dart';
-import 'package:qjumpa/src/core/constants.dart';
-import 'package:qjumpa/src/core/firebase_auth.dart';
-import 'package:qjumpa/src/core/hex_converter.dart';
+import 'package:qjumpa/src/core/utils/constants.dart';
+import 'package:qjumpa/src/core/services/firebase_auth.dart';
+import 'package:qjumpa/src/core/utils/hex_converter.dart';
 import 'package:qjumpa/src/presentation/login/login.dart';
 import 'package:qjumpa/src/presentation/widgets/custom_textformfield.dart';
 import 'package:qjumpa/src/presentation/widgets/large_button.dart';

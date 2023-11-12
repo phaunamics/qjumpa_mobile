@@ -1,4 +1,4 @@
-import 'package:qjumpa/src/core/usecase.dart';
+import 'package:qjumpa/src/core/utils/usecase.dart';
 import 'package:qjumpa/src/domain/entity/store_inventory.dart';
 import 'package:qjumpa/src/domain/repositories/inventory_repository.dart';
 
