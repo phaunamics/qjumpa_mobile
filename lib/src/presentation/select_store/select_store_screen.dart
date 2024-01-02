@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:awesome_dialog/awesome_dialog.dart';
@@ -6,14 +7,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:qjumpa/injection.dart';
+import 'package:qjumpa/src/core/services/user_auth_service.dart';
 import 'package:qjumpa/src/core/utils/constants.dart';
 import 'package:qjumpa/src/core/utils/hex_converter.dart';
-import 'package:qjumpa/src/core/utils/network_info.dart';
 import 'package:qjumpa/src/core/utils/usecase.dart';
 import 'package:qjumpa/src/data/local_storage/cart_shared_preferences.dart';
 import 'package:qjumpa/src/domain/entity/exception.dart';
 import 'package:qjumpa/src/domain/entity/order_entity.dart';
+import 'package:qjumpa/src/domain/entity/shopping_cart_entity.dart';
 import 'package:qjumpa/src/domain/entity/store_entity.dart';
+import 'package:qjumpa/src/domain/usecases/get_shopping_cart_usecase.dart';
 import 'package:qjumpa/src/domain/usecases/get_store_usecase.dart';
 import 'package:qjumpa/src/presentation/product_scan/bloc/barcodescanner_bloc.dart';
 import 'package:qjumpa/src/presentation/widgets/bottom_nav/product_search_nav_bar.dart';
@@ -23,6 +26,7 @@ import 'package:qjumpa/src/presentation/widgets/error_widget.dart';
 import 'package:qjumpa/src/presentation/widgets/ios_scanner_view.dart';
 import 'package:qjumpa/src/presentation/widgets/large_button.dart';
 import 'package:qjumpa/src/presentation/widgets/search_result_card.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SelectStoreScreen extends StatefulWidget {
   static const routeName = '/storesearch';
@@ -37,7 +41,12 @@ class _SelectStoreScreenState extends State<SelectStoreScreen> {
   final getBarcodeScannerbloc = sl.get<BarcodeScannerBloc>();
   final getstore = sl.get<GetStoreUseCase>();
   final _cartSharedPref = sl.get<CartSharedPreferences>();
-  final networkInfo = sl.get<NetworkInfo>();
+  final getShoppingCartUsecase = sl.get<GetShoppingCartUseCase>();
+  final _prefs = sl.get<SharedPreferences>();
+  int initialCartLength = 0;
+  late StreamController<int> _cartLengthController;
+
+  bool _isInitializingCartLength = true;
 
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
@@ -78,6 +87,60 @@ class _SelectStoreScreenState extends State<SelectStoreScreen> {
     }
     // if failed,use refreshFailed()
     _refreshController.refreshCompleted();
+  }
+
+  Future<int> _fetchCartLength() async {
+    final ShoppingCartEntity? shoppingCart =
+        await getShoppingCartUsecase.call(_prefs.getInt(userId).toString());
+    // return shoppingCart!.data!.cartItems!.length;
+    if (shoppingCart != null &&
+        shoppingCart.data != null &&
+        shoppingCart.data!.cartItems != null) {
+      return shoppingCart.data!.cartItems!.length;
+    } else {
+      return 0;
+    }
+  }
+
+  Future<void> _updateCartLength() async {
+    try {
+      final cartLength = await _fetchCartLength();
+      // print("cart length is $cartLength");
+      initialCartLength = cartLength;
+      _cartLengthController.sink.add(initialCartLength);
+    } catch (error) {
+      // print('Error fetching initial cart length: $error');
+      _cartLengthController.sink.add(
+          initialCartLength); // Fallback to 0 or handle the error as required
+    }
+  }
+
+  Future<void> _initializeCartLength() async {
+    try {
+      int length = await _fetchCartLength();
+      setState(() {
+        initialCartLength = length;
+        _isInitializingCartLength = false;
+      });
+      _cartLengthController.sink
+          .add(initialCartLength); // Add the length to your stream
+    } catch (error) {
+      print('Error initializing cart length: $error');
+      // Handle error as per your requirements
+    }
+  }
+
+  @override
+  void initState() {
+    _cartLengthController = StreamController<int>.broadcast();
+    _initializeCartLength();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _cartLengthController.close();
+    super.dispose();
   }
 
   @override
@@ -132,7 +195,7 @@ class _SelectStoreScreenState extends State<SelectStoreScreen> {
     );
   }
 
-  Stack initialBuild(
+  Widget initialBuild(
       double screenHeight, BuildContext context, double screenWidth) {
     return Stack(
       children: [
@@ -327,8 +390,8 @@ class _SelectStoreScreenState extends State<SelectStoreScreen> {
                       SizedBox(
                         height: screenHeight / 34,
                       ),
-                      CircularProgressIndicator(
-                        color: HexColor(primaryColor),
+                      CircularProgressIndicator.adaptive(
+                        backgroundColor: HexColor(primaryColor),
                       ),
                     ],
                   ),
@@ -468,11 +531,16 @@ class _SelectStoreScreenState extends State<SelectStoreScreen> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       StreamBuilder<int>(
-                        stream: _cartSharedPref.cartCountStream,
-                        initialData: _cartSharedPref.totalItemsInCart,
+                        stream: _cartLengthController.stream,
+                        initialData: initialCartLength,
                         builder: (context, snapshot) {
+                          if (!snapshot.hasData) {
+                            return CustomBadge(
+                                badgeCount: 0 // Use the snapshot data
+                                );
+                          }
                           return CustomBadge(
-                            badgeCount: snapshot.data ?? 0,
+                            badgeCount: snapshot.data!, // Use the snapshot data
                           );
                         },
                       )
@@ -486,6 +554,9 @@ class _SelectStoreScreenState extends State<SelectStoreScreen> {
                       Expanded(
                         child: SearchResultCard(
                           order: order!,
+                          onProductAddedToCart: () {
+                            _updateCartLength();
+                          },
                         ),
                       ),
                     ],

@@ -2,7 +2,6 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:qjumpa/src/presentation/shopping_cart/cart.dart';
 import 'package:qjumpa/src/presentation/widgets/barcode_scanner_overlay.dart';
 
 class IOSScannerView extends StatefulWidget {
@@ -21,8 +20,7 @@ class _IOSScannerViewState extends State<IOSScannerView> {
     return Scaffold(
       appBar: AppBar(
         title: GestureDetector(
-            onTap: () => Navigator.pushNamed(context, Cart.routeName),
-            child: const Text('Qjumpa')),
+            onTap: () => Navigator.pop(context), child: const Text('Qjumpa')),
         centerTitle: true,
         actions: [
           IconButton(

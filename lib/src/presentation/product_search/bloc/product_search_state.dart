@@ -28,5 +28,5 @@ class ErrorState extends ProductSearchState {
 
   const ErrorState(this.message);
   @override
-  List<Object> get props => [];
+  List<Object> get props => [message];
 }

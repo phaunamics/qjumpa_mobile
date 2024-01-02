@@ -1,4 +1,3 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:qjumpa/injection.dart' as di;
@@ -8,7 +7,6 @@ import 'package:qjumpa/src/presentation/splash_screen/splash_screen.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
   await di.init();
   // await loadEnv();
   runApp(const MyApp());
@@ -27,6 +25,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
+        scaffoldBackgroundColor: Colors.white,
         fontFamily: GoogleFonts.montserrat().fontFamily,
         primarySwatch: Colors.blue,
       ),

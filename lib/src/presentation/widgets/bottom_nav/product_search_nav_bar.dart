@@ -8,6 +8,7 @@ import 'package:qjumpa/src/presentation/select_store/select_store_screen.dart';
 import 'package:qjumpa/src/presentation/widgets/bottom_nav/shopping_list_nav_bar.dart';
 
 class ProductSearchBottomNavBar extends StatefulWidget {
+  static const routeName = '/productSeearchNavBar';
   final StoreEntity storeEntity;
   const ProductSearchBottomNavBar({
     Key? key,

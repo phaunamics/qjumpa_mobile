@@ -1,9 +1,8 @@
 class Order {
   final int orderId;
   final String itemName;
-  final String productId;
+  final int productId;
   final int qty;
-
   final int price;
 
   int get total => price * qty;
@@ -29,7 +28,7 @@ class Order {
   Order copyWith({
     int? orderId,
     String? itemName,
-    String? productId,
+    int? productId,
     int? qty,
     int? total,
     int? price,

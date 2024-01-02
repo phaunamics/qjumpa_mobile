@@ -39,11 +39,10 @@ class ProductSearchBloc extends Bloc<ProductSearchEvent, ProductSearchState> {
         try {
           final inventory = await getInventoryUseCase.call(event.storeId);
           _cachedInventory = inventory;
-
           performItemNameSearch(value: event.query, inventory: inventory);
           emit(ProductSearchCompletedState(inventory: _searchResults));
         } on SocketException catch (e) {
-          // Handle SocketException
+          // TODO: Handle SocketException
           emit(ErrorState(
               'SocketException: Failed host lookup: ${e.address}:${e.port} (${e.message})'));
         } on DioError catch (e) {

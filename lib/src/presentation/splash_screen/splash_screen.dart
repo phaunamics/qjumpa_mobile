@@ -1,10 +1,13 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:qjumpa/injection.dart';
+import 'package:qjumpa/src/core/services/user_auth_service.dart';
 import 'package:qjumpa/src/core/utils/constants.dart';
 import 'package:qjumpa/src/core/utils/hex_converter.dart';
-import 'package:qjumpa/src/presentation/login/login.dart';
+import 'package:qjumpa/src/presentation/login/login_view.dart';
 import 'package:qjumpa/src/presentation/select_store/select_store_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreeen extends StatefulWidget {
   static const routeName = '/splashscreen';
@@ -17,12 +20,17 @@ class SplashScreeen extends StatefulWidget {
 
 class _SplashScreeenState extends State<SplashScreeen> {
   late final Timer timer;
+  final _prefs = sl.get<SharedPreferences>();
 
   @override
   void initState() {
     super.initState();
     timer = Timer(const Duration(seconds: 4), () {
-      Navigator.pushReplacementNamed(context, SelectStoreScreen.routeName);
+      if (_prefs.getString(authTokenKey) == null) {
+        Navigator.pushReplacementNamed(context, LoginView.routeName);
+      } else {
+        Navigator.pushReplacementNamed(context, SelectStoreScreen.routeName);
+      }
     });
   }
 

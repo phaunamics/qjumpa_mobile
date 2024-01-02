@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_paystack/flutter_paystack.dart';
 import 'package:qjumpa/injection.dart';
+import 'package:qjumpa/src/core/services/user_auth_service.dart';
 import 'package:qjumpa/src/core/utils/constants.dart';
-import 'package:qjumpa/src/core/services/firebase_auth.dart';
 import 'package:qjumpa/src/core/utils/hex_converter.dart';
 import 'package:qjumpa/src/core/utils/uuid_generator.dart';
 import 'package:qjumpa/src/data/local_storage/cart_shared_preferences.dart';
 import 'package:qjumpa/src/domain/entity/enums.dart';
 import 'package:qjumpa/src/domain/entity/secret_key.dart';
-import 'package:qjumpa/src/presentation/payment/payment_success.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+typedef PaymentCallback = void Function(bool status, String reference);
 
 class PaystackPaymentChannel extends StatefulWidget {
   // final void Function()? onTap;
-  const PaystackPaymentChannel({
-    super.key,
-  });
+  final int? grandTotal;
+  final PaymentCallback callback;
+  const PaystackPaymentChannel(
+      {super.key, required this.grandTotal, required this.callback});
 
   @override
   State<PaystackPaymentChannel> createState() => _PaystackPaymentChannelState();
@@ -22,7 +25,7 @@ class PaystackPaymentChannel extends StatefulWidget {
 
 class _PaystackPaymentChannelState extends State<PaystackPaymentChannel> {
   final cartSharedPref = sl.get<CartSharedPreferences>();
-  final auth = sl.get<Auth>();
+  final _prefs = sl.get<SharedPreferences>();
   final plugin = PaystackPlugin();
   String successMessage = '';
 
@@ -33,11 +36,11 @@ class _PaystackPaymentChannelState extends State<PaystackPaymentChannel> {
   }
 
   checkout() async {
-    int grandTotal = (cartSharedPref.grandTotal.round()) * 100;
+    int grandTotal = (widget.grandTotal!.round()) * 100;
     Charge charge = Charge()
       ..amount = grandTotal
       ..reference = UUIDGenerator.uniqueRefenece(4)
-      ..email = auth.currentUser?.email
+      ..email = _prefs.getString(userEmail)
       ..subAccount = ''
       ..bearer = Bearer.SubAccount
       ..transactionCharge = 99.7.round()
@@ -49,16 +52,10 @@ class _PaystackPaymentChannelState extends State<PaystackPaymentChannel> {
     );
 
     if (response.status == true) {
-      successMessage = 'Payment was successful. Ref: ${response.reference}';
-      Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-            builder: (context) =>
-                PaymentSuccess(successMessage: successMessage),
-          ),
-          ModalRoute.withName('/'));
+      widget.callback(true, response.reference as String);
     } else {
-      //implement payment failure
+      widget.callback(false, response.reference as String);
+      // Handle payment failure
     }
   }
 

@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:qjumpa/src/domain/entity/shopping_list_entity.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-const _shoppingListKey = "shopping_list_shared_preference_key";
+const shoppingListKey = "shopping_list_shared_preference_key";
 
 class ShoppingListSharedPreferences {
   final SharedPreferences _sharedPreferences;
@@ -37,7 +37,7 @@ class ShoppingListSharedPreferences {
         id: shoppingEntity.id,
       );
       shoppingList[index] = newItem;
-      _sharedPreferences.setString(_shoppingListKey, jsonEncode(shoppingList));
+      _sharedPreferences.setString(shoppingListKey, jsonEncode(shoppingList));
       _shoppingListController.add(shoppingList);
       _controller.add(shoppingList.length);
     }
@@ -48,7 +48,7 @@ class ShoppingListSharedPreferences {
         List<ShoppingListEntity>.from(getShoppingList());
     shoppingList.add(newItem);
 
-    _sharedPreferences.setString(_shoppingListKey, jsonEncode(shoppingList));
+    _sharedPreferences.setString(shoppingListKey, jsonEncode(shoppingList));
     _shoppingListController.add(shoppingList);
     _controller.add(shoppingList.length);
   }
@@ -61,7 +61,7 @@ class ShoppingListSharedPreferences {
   }
 
   List<ShoppingListEntity> getShoppingList() {
-    final res = _sharedPreferences.getString(_shoppingListKey);
+    final res = _sharedPreferences.getString(shoppingListKey);
     if (res == null || res.isEmpty) return List.empty();
     return List.from(jsonDecode(res))
         .map((e) => ShoppingListEntity.fromJson(e))

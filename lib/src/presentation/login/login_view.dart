@@ -1,13 +1,12 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:qjumpa/injection.dart';
-import 'package:qjumpa/main.dart';
-import 'package:qjumpa/src/core/services/firebase_auth.dart';
 import 'package:qjumpa/src/core/utils/constants.dart';
 import 'package:qjumpa/src/core/utils/hex_converter.dart';
+import 'package:qjumpa/src/presentation/login/bloc/login_user_bloc.dart';
 import 'package:qjumpa/src/presentation/register_user/register_screen.dart';
-import 'package:qjumpa/src/presentation/update_password/update_password_screen.dart';
+import 'package:qjumpa/src/presentation/select_store/select_store_screen.dart';
 import 'package:qjumpa/src/presentation/widgets/custom_textformfield.dart';
 import 'package:qjumpa/src/presentation/widgets/large_button.dart';
 
@@ -20,126 +19,22 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> {
-  final auth = sl.get<Auth>();
   final _formKey = GlobalKey<FormState>();
+  final loginUserBloc = sl.get<LoginUserBloc>();
 
   String? errorMessage = '';
   bool passwordVisible = false;
 
   bool isLogin = true;
-  final _emailController = TextEditingController();
+  final _phoneNumberController = TextEditingController();
   final _passwordController = TextEditingController();
 
-  Future<User?> signInWithEmailAndPassword(
-      {required String userEmail, required String password}) async {
-    try {
-      // showDialog(
-      //   context: context,
-      //   barrierDismissible: false,
-      //   builder: (context) => Scaffold(
-      //     backgroundColor: Colors.transparent,
-      //     body: Column(
-      //       children: [
-      //         SizedBox(
-      //           height: MediaQuery.of(context).size.height / 4,
-      //         ),
-      //         Center(
-      //           child: CircularProgressIndicator(
-      //             color: HexColor(primaryColor),
-      //           ),
-      //         ),
-      //         SizedBox(
-      //           height: MediaQuery.of(context).size.height / 20,
-      //         ),
-      //         const Text(
-      //           'Welcome ...',
-      //           style: TextStyle(fontSize: 25, color: Colors.white),
-      //         ),
-      //       ],
-      //     ),
-      //   ),
-      // );
-      await auth.signInWithEmailAndPassword(
-          email: userEmail, password: password);
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'wrong-password') {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(12),
-                topRight: Radius.circular(12),
-              ),
-            ),
-            backgroundColor: Colors.grey.shade300,
-            content: const Text(
-              'Incorrect login details. Check email or password',
-              style: TextStyle(color: Colors.red, fontSize: 17),
-            ),
-          ),
-        );
-      } else if (e.code == 'user-not-found') {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20))),
-            backgroundColor: Colors.grey.shade300,
-            content: const Center(
-              child: Text(
-                'user not found. Please create an account',
-                style: TextStyle(color: Colors.red, fontSize: 17),
-              ),
-            ),
-          ),
-        );
-      } else if (e.code == 'invalid-email') {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20))),
-            backgroundColor: Colors.grey.shade300,
-            content: const Text(
-              'Incorrect login details. Check email or password',
-              style: TextStyle(color: Colors.red, fontSize: 17),
-            ),
-          ),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20))),
-            backgroundColor: Colors.grey.shade300,
-            content: const Text(
-              'Check your internet connection',
-              style: TextStyle(color: Colors.red, fontSize: 17),
-            ),
-          ),
-        );
-      }
-      setState(() {
-        errorMessage = e.code;
-      });
-    }
-
-    // navigatorKey.currentState!.popUntil((route) => route.isFirst);
-    navigatorKey.currentState!.pop();
-    return null;
-  }
-
-  String? _emailValidator(String? value) {
+  String? _phoneNumberValidator(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Please enter your email';
+      return 'Please enter your phone number';
     }
-    if (!RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$')
-        .hasMatch(value)) {
-      return 'Please enter a valid email';
+    if (!RegExp(r'^(?:\+234|0)[789][01]\d{8}$').hasMatch(value)) {
+      return 'Please enter a valid phone number';
     }
     return null;
   }
@@ -159,7 +54,7 @@ class _LoginViewState extends State<LoginView> {
 
   @override
   void dispose() {
-    _emailController.dispose();
+    _phoneNumberController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
@@ -167,8 +62,62 @@ class _LoginViewState extends State<LoginView> {
   @override
   Widget build(BuildContext context) {
     var screenHeight = MediaQuery.of(context).size.height;
-    return Scaffold(
-        body: Stack(children: [
+    return BlocListener<LoginUserBloc, LoginUserState>(
+      bloc: loginUserBloc,
+      listener: (context, state) {
+        if (state is LoginUserCompleted) {
+          Navigator.pushReplacementNamed(context, SelectStoreScreen.routeName);
+        } else if (state is ErrorState) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Center(
+                  child: Text(
+                state.messsge,
+                style: const TextStyle(color: Colors.red),
+              )),
+              duration: const Duration(seconds: 2),
+              backgroundColor: Colors.white,
+            ),
+          );
+        }
+      },
+      child: Scaffold(
+          body: BlocBuilder<LoginUserBloc, LoginUserState>(
+        bloc: loginUserBloc,
+        builder: (context, state) {
+          if (state is LoginUserLoading) {
+            return Stack(
+              children: [
+                Positioned(
+                  top: screenHeight / 2.8,
+                  left: screenHeight / 6,
+                  child: Center(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text('Welcome..'),
+                        SizedBox(
+                          height: screenHeight / 23,
+                        ),
+                        CircularProgressIndicator.adaptive(
+                          backgroundColor: HexColor(primaryColor),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            );
+          }
+          return loginScreenView(screenHeight, context);
+        },
+      )),
+    );
+  }
+
+  Stack loginScreenView(double screenHeight, BuildContext context) {
+    return Stack(children: [
       Positioned(
         top: screenHeight <= 667 ? screenHeight / 34 : screenHeight / 15,
         child: Container(
@@ -196,13 +145,14 @@ class _LoginViewState extends State<LoginView> {
                     child: Column(
                       children: [
                         CustomTextFormField(
-                          validator: _emailValidator,
-                          controller: _emailController,
-                          hint: 'user@email.com',
-                          label: 'EMAIL',
+                          validator: _phoneNumberValidator,
+                          controller: _phoneNumberController,
+                          hint: '123456789',
+                          label: 'PHONE NUMBER',
                           value: false,
                           suffixIcon: null,
                           focus: true,
+                          keyboardType: TextInputType.number,
                         ),
                         SizedBox(
                           height: screenHeight / 26,
@@ -233,10 +183,11 @@ class _LoginViewState extends State<LoginView> {
                     ),
                   ),
                 ),
-
                 GestureDetector(
-                  onTap: () => Navigator.pushReplacementNamed(
-                      context, UpdatePasswordScreen.routeName),
+                  onTap: () => {}
+                  // Navigator.pushReplacementNamed(
+                  //     context, UpdatePasswordScreen.routeName)
+                  ,
                   child: Padding(
                     padding: EdgeInsets.only(
                         top: screenHeight / 40, bottom: screenHeight / 48),
@@ -254,9 +205,12 @@ class _LoginViewState extends State<LoginView> {
                     child: LargeBtn(
                       onTap: () async {
                         if (_formKey.currentState!.validate()) {
-                          await signInWithEmailAndPassword(
+                          loginUserBloc.add(
+                            Login(
                               password: _passwordController.text.trim(),
-                              userEmail: _emailController.text.trim());
+                              mobileNumber: _phoneNumberController.text.trim(),
+                            ),
+                          );
                         }
                       },
                       text: 'Login',
@@ -294,17 +248,11 @@ class _LoginViewState extends State<LoginView> {
                 SizedBox(
                   height: screenHeight / 54,
                 ),
-                // IconButton(
-                //   onPressed: () => Navigator.pushReplacementNamed(
-                //       context, StoreSearchScreen.routeName),
-                //   icon: const Icon(Icons.close),
-                //   iconSize: 13,
-                // )
               ],
             ),
           ),
         ),
       )
-    ]));
+    ]);
   }
 }

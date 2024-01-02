@@ -9,6 +9,7 @@ class CustomTextFormField extends StatefulWidget {
   final double height;
   final double hintFontSize;
   final FocusNode? focusnode;
+  final TextInputType? keyboardType;
   final bool? focus;
   String? Function(String?)? validator;
   final void Function(String?)? onChanged;
@@ -25,7 +26,8 @@ class CustomTextFormField extends StatefulWidget {
     this.onChanged,
     this.focusnode,
     this.validator,
-    this.focus,
+    this.focus, 
+    this.keyboardType,
   });
 
   @override
@@ -38,6 +40,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
     return TextFormField(
       controller: widget.controller,
       obscureText: widget.value,
+      keyboardType: widget.keyboardType,
       autofocus: widget.focus!,
       validator: widget.validator,
       onChanged: widget.onChanged,

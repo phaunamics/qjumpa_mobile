@@ -1,5 +1,5 @@
-import 'package:qjumpa/src/core/utils/constants.dart';
 import 'package:qjumpa/src/core/services/dio_client.dart';
+import 'package:qjumpa/src/core/utils/constants.dart';
 import 'package:qjumpa/src/domain/entity/store_entity.dart';
 
 abstract class GetStoreRemoteDataSource {
@@ -12,7 +12,7 @@ class GetStoreRemoteDataSourceImpl implements GetStoreRemoteDataSource {
   GetStoreRemoteDataSourceImpl({required this.dioClient});
   @override
   Future<List<StoreEntity>> getStore() async {
-    final response = await dioClient.get(storeEndPoint);
+    final response = await dioClient.getListOfStores(storeEndPoint);
 
     if (response['data'] == null) return [];
     await Future.delayed(const Duration(seconds: 5));

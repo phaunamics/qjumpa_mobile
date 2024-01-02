@@ -1,26 +1,27 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:qjumpa/injection.dart';
-import 'package:qjumpa/src/core/services/firebase_auth.dart';
+import 'package:qjumpa/src/core/services/user_auth_service.dart';
 import 'package:qjumpa/src/core/utils/constants.dart';
 import 'package:qjumpa/src/core/utils/hex_converter.dart';
 import 'package:qjumpa/src/data/local_storage/item_shared_preferences.dart';
 import 'package:qjumpa/src/domain/entity/shopping_list_entity.dart';
 import 'package:qjumpa/src/presentation/login/login_view.dart';
 import 'package:qjumpa/src/presentation/widgets/large_button.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CreateNewListView extends StatefulWidget {
   const CreateNewListView({super.key});
 
   @override
-  _CreateNewListViewState createState() => _CreateNewListViewState();
+  CreateNewListViewState createState() => CreateNewListViewState();
 }
 
-class _CreateNewListViewState extends State<CreateNewListView> {
+class CreateNewListViewState extends State<CreateNewListView> {
   late TextEditingController _listcontroller;
   late TextEditingController _titleController;
   final _formKey = GlobalKey<FormState>();
-  final _auth = sl.get<Auth>();
+  final _prefs = sl.get<SharedPreferences>();
 
   final FocusNode _focusNode = FocusNode();
   final shoppingListSharedPref = sl.get<ShoppingListSharedPreferences>();
@@ -118,7 +119,7 @@ class _CreateNewListViewState extends State<CreateNewListView> {
         LargeBtn(
           onTap: () {
             if (_formKey.currentState!.validate()) {
-              if (_auth.currentUser != null) {
+              if (_prefs.getString(authTokenKey) != null) {
                 var title = _titleController.text;
                 var itemBody = mapTextToItemBody(_listcontroller.text.trim());
                 var item =
@@ -160,7 +161,7 @@ class _CreateNewListViewState extends State<CreateNewListView> {
               );
             }
             if (_formKey.currentState!.validate()) {
-              if (_auth.currentUser == null) {
+              if (_prefs.getString(authTokenKey) == null) {
                 loginRequestPopUp(context).show();
               }
             }
@@ -180,8 +181,7 @@ class _CreateNewListViewState extends State<CreateNewListView> {
       padding: const EdgeInsets.all(6),
       desc: 'Please login or register to create shopping list',
       btnOk: GestureDetector(
-        onTap: () =>
-            Navigator.pushReplacementNamed(context, LoginView.routeName),
+        onTap: () => Navigator.pushNamed(context, LoginView.routeName),
         child: Container(
           height: 55,
           margin: const EdgeInsets.symmetric(horizontal: 20),

@@ -44,18 +44,18 @@ dependencies:
   permission_handler: ^10.2.0
   badges: ^3.1.1
   shared_preferences: ^2.1.1
-  firebase_core: ^2.13.1
-  firebase_auth: ^4.6.2
   email_validator: ^2.1.17
   barcode_scan2: ^4.2.4
   mobile_scanner: ^3.2.0
   intl: ^0.17.0
   flutter_paystack: ^1.0.7
-  flutter_dotenv: ^5.1.0
   webview_flutter: ^3.0.4
   pull_to_refresh: ^2.0.0
   awesome_dialog: ^3.1.0
   internet_connection_checker: ^1.0.0+1
+  bloc: ^8.1.2
+  easy_debounce: ^2.0.3
+  flutter_gif: ^0.0.4
 
 
 dev_dependencies:
@@ -74,7 +74,6 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.

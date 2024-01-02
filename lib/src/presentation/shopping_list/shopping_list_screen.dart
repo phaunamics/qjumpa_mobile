@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:qjumpa/injection.dart';
+import 'package:qjumpa/src/core/services/user_auth_service.dart';
 import 'package:qjumpa/src/core/utils/constants.dart';
-import 'package:qjumpa/src/core/services/firebase_auth.dart';
 import 'package:qjumpa/src/core/utils/hex_converter.dart';
 import 'package:qjumpa/src/data/local_storage/item_shared_preferences.dart';
 import 'package:qjumpa/src/presentation/profile/profile_screen.dart';
 import 'package:qjumpa/src/presentation/shopping_list/create_new_list.dart';
 import 'package:qjumpa/src/presentation/widgets/collapsible_container.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ShoppingListScreen extends StatefulWidget {
   static const routeName = '/shopping_list';
@@ -18,8 +19,7 @@ class ShoppingListScreen extends StatefulWidget {
 
 class _ShoppingListScreenState extends State<ShoppingListScreen> {
   final shoppingListSharedPref = sl.get<ShoppingListSharedPreferences>();
-  final _auth = sl.get<Auth>();
-
+  final _prefs = sl.get<SharedPreferences>();
   @override
   Widget build(BuildContext context) {
     var screenHeight = MediaQuery.of(context).size.height;
@@ -34,7 +34,7 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: screenHeight / 41.0), 
+                padding: EdgeInsets.symmetric(horizontal: screenHeight / 41.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -57,13 +57,13 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
                             fontWeight: FontWeight.w400,
                             color: Colors.black.withOpacity(0.5)),
                         GestureDetector(
-                          onTap: () => _auth.currentUser == null
+                          onTap: () => _prefs.getString(authTokenKey) == null
                               ? null
                               : Navigator.pushNamed(
                                   context, ProfileScreen.routeName),
                           child: customText(
                             text:
-                                '@${_auth.currentUser?.email?.split('@')[0]} >>',
+                                '@${_prefs.getString(userEmail)?.split('@')[0]}',
                             color: Colors.black,
                             fontSize: 15,
                             decoration: TextDecoration.underline,

@@ -2,32 +2,35 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:qjumpa/injection.dart';
+import 'package:qjumpa/src/core/services/user_auth_service.dart';
 import 'package:qjumpa/src/core/utils/constants.dart';
-import 'package:qjumpa/src/core/services/firebase_auth.dart';
 import 'package:qjumpa/src/core/utils/hex_converter.dart';
-import 'package:qjumpa/src/data/local_storage/cart_shared_preferences.dart';
-import 'package:qjumpa/src/domain/entity/order_entity.dart';
+import 'package:qjumpa/src/domain/usecases/get_shopping_cart_usecase.dart';
 import 'package:qjumpa/src/presentation/login/login_view.dart';
+import 'package:qjumpa/src/presentation/payment/payment_success.dart';
 import 'package:qjumpa/src/presentation/payment/paystack_payment_channel.dart';
-import 'package:qjumpa/src/presentation/widgets/item_card.dart';
+import 'package:qjumpa/src/presentation/widgets/cart_item_card.dart';
 import 'package:qjumpa/src/presentation/widgets/small_button.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CartView extends StatefulWidget {
   static const routeName = '/cartView';
 
-  const CartView({super.key});
+  const CartView({
+    super.key,
+  });
 
   @override
   State<CartView> createState() => _CartViewState();
 }
 
 class _CartViewState extends State<CartView> {
-  final cartSharedPref = sl.get<CartSharedPreferences>();
+  final _prefs = sl.get<SharedPreferences>();
+  final getshoppingCartUsecase = sl.get<GetShoppingCartUseCase>();
+  // final cartBloc = sl.get<CartBloc>();
 
-  final _auth = sl.get<Auth>();
-
-  void checkIfUserIsLoggedIn() {
-    if (_auth.currentUser != null) {
+  void checkIfUserIsLoggedIn({int? grandTotal}) {
+    if (_prefs.getString(authTokenKey) != null) {
       showModalBottomSheet(
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
@@ -36,7 +39,34 @@ class _CartViewState extends State<CartView> {
           ),
         ),
         context: context,
-        builder: (context) => const PaystackPaymentChannel(),
+        builder: (context) => PaystackPaymentChannel(
+          grandTotal: grandTotal ?? 0,
+          callback: (bool status, String reference) {
+            if (status) {
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => PaymentSuccess(
+                    isSuccesful: status,
+                    reference: reference,
+                  ),
+                ),
+                ModalRoute.withName('/'),
+              );
+            } else {
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => PaymentSuccess(
+                    isSuccesful: status,
+                    reference: reference,
+                  ),
+                ),
+                ModalRoute.withName('/'),
+              );
+            }
+          },
+        ),
       );
     } else {
       loginRequestPopUp(context).show();
@@ -47,117 +77,38 @@ class _CartViewState extends State<CartView> {
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
+      backgroundColor: Colors.white,
       body: SafeArea(
-        child: Stack(
-          children: [
-            Container(
-              color: Colors.white,
-              width: double.infinity,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+        child: Container(
+          color: Colors.white,
+          width: double.infinity,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'Cart',
-                          style: TextStyle(
-                              fontSize: 24, fontWeight: FontWeight.w600),
-                        ),
-                        IconButton(
-                          onPressed: () => Navigator.pop(context),
-                          icon: const Icon(Icons.close,
-                              size: 30, color: Colors.red),
-                        ),
-                      ],
+                    const Text(
+                      'Cart',
+                      style:
+                          TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
                     ),
-                    SizedBox(
-                      height: screenHeight / 54,
+                    IconButton(
+                      onPressed: () => Navigator.pop(context),
+                      icon:
+                          const Icon(Icons.close, size: 30, color: Colors.red),
                     ),
-                    Expanded(child: shoppingCartListView(screenHeight)),
-                    Divider(
-                      height: screenHeight / 98,
-                      thickness: 1,
-                      color: Colors.black,
-                    ),
-                    Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text(
-                              'Subtotal',
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.w400),
-                            ),
-                            StreamBuilder<int>(
-                              stream: cartSharedPref.subTotalStream,
-                              builder: (context, snapshot) {
-                                return subTotalCard(
-                                    value: snapshot.data ??
-                                        cartSharedPref.subTotal);
-                              },
-                            ),
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text(
-                              'Surcharge',
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.w400),
-                            ),
-                            StreamBuilder<double>(
-                              stream: cartSharedPref.surchargeStream,
-                              builder: (context, snapshot) {
-                                return surChargeCard(
-                                    value: snapshot.data ??
-                                        cartSharedPref.surcharge);
-                              },
-                            ),
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text(
-                              'Grand Total',
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.w400),
-                            ),
-                            StreamBuilder<double>(
-                              stream: cartSharedPref.grandTotalStream,
-                              builder: (context, snapshot) {
-                                return grandTotalCard(
-                                    value: snapshot.data ??
-                                        cartSharedPref.grandTotal);
-                              },
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: screenHeight / 45),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 16.0),
-                      child: SmallBtn(
-                        text: 'Pay',
-                        onTap: () {
-                          checkIfUserIsLoggedIn();
-                        },
-                        fontSize: 24,
-                        fontWeight: FontWeight.w600,
-                        width: 157,
-                      ),
-                    )
                   ],
                 ),
-              ),
+                SizedBox(
+                  height: screenHeight / 54,
+                ),
+                Expanded(child: shoppingCartListView(screenHeight)),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -177,7 +128,7 @@ class _CartViewState extends State<CartView> {
     );
   }
 
-  Widget grandTotalCard({required double value}) {
+  Widget grandTotalCard({required num value}) {
     return Text(
       NumberFormat.currency(symbol: '₦ ').format(value),
       style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
@@ -187,25 +138,107 @@ class _CartViewState extends State<CartView> {
   Widget shoppingCartListView(double screenHeight) {
     return SizedBox(
       height: screenHeight / 1.43,
-      child: StreamBuilder<int>(
-        stream: cartSharedPref.cartCountStream,
-        initialData: cartSharedPref.totalItemsInCart,
+      child: FutureBuilder(
+        future: getshoppingCartUsecase.call(_prefs.getInt(userId).toString()),
         builder: (context, snapshot) {
-          if (snapshot.hasData && snapshot.data! > 0) {
-            return ListView.builder(
-              padding: const EdgeInsets.fromLTRB(4, 4, 4, 0),
-              itemCount: cartSharedPref.totalItemsInCart,
-              itemBuilder: (context, index) {
-                final Order order = cartSharedPref.getCartItems()[index];
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 12.0),
-                  child: ItemCard(order: order),
-                );
-              },
-            );
-          } else {
+          if (snapshot.hasData && snapshot.data!.data != null) {
+            final shoppingCart = snapshot.data;
             return Column(
               children: [
+                Expanded(
+                  child: ListView.builder(
+                    padding: const EdgeInsets.fromLTRB(4, 4, 4, 0),
+                    itemCount: shoppingCart!.data?.cartItems?.length ?? 0,
+                    itemBuilder: (context, index) {
+                      final cartItem = shoppingCart.data!.cartItems![index];
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 12.0),
+                        child: CartItemCard(
+                          itemName: cartItem.name ?? '',
+                          price: cartItem.price ?? 0,
+                          qty: cartItem.quantity ?? 0,
+                          totalAmount: cartItem.totalAmount ?? 0,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                Divider(
+                  height: screenHeight / 98,
+                  thickness: 1,
+                  color: Colors.black,
+                ),
+                Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Subtotal',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w400),
+                        ),
+                        subTotalCard(
+                            value:
+                                0) //TODO: Ask favour to make subtotal from backend,
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Surcharge',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w400),
+                        ),
+                        surChargeCard(
+                            value:
+                                0), //TODO: Ask favour to make surcharge from backend,
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Grand Total',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w400),
+                        ),
+                        grandTotalCard(
+                            value: shoppingCart.data?.totalAmount! ?? 0),
+                      ],
+                    ),
+                  ],
+                ),
+                SizedBox(height: screenHeight / 45),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 16.0),
+                  child: SmallBtn(
+                    text: 'Pay',
+                    onTap: () {
+                      checkIfUserIsLoggedIn(
+                          grandTotal: snapshot.data!.data?.totalAmount);
+                    },
+                    fontSize: 24,
+                    fontWeight: FontWeight.w600,
+                    width: 157,
+                  ),
+                ),
+              ],
+            );
+          } else if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator.adaptive(
+                backgroundColor: HexColor(primaryColor),
+              ),
+            );
+          } else if (snapshot.data?.data == null) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const SizedBox(
+                  height: 60,
+                ),
                 const Image(
                   image: AssetImage('assets/empty_cart.jpeg'),
                 ),
@@ -223,6 +256,8 @@ class _CartViewState extends State<CartView> {
                 )
               ],
             );
+          } else {
+            return Text('An error occured ${snapshot.error}');
           }
         },
       ),

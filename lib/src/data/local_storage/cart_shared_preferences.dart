@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:qjumpa/src/domain/entity/order_entity.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-const _cartKey = "cart_shared_preference_key";
+const cartKey = "cart_shared_preference_key";
 
 class CartSharedPreferences {
   final SharedPreferences _sharedPreferences;
@@ -78,7 +78,7 @@ class CartSharedPreferences {
       orders[index] = newOrder;
     }
 
-    _sharedPreferences.setString(_cartKey, jsonEncode(orders));
+    _sharedPreferences.setString(cartKey, jsonEncode(orders));
     _controller.add(orders.length);
     _subTotalController.add(subTotal);
     _surchargeController.add(surcharge);
@@ -93,6 +93,9 @@ class CartSharedPreferences {
     var orders = List.from(getCartItems());
     final int index =
         orders.indexWhere((order) => order.orderId == newOrder.orderId);
+    print('Before modification:');
+    print('orders: $orders');
+    print('newOrder: $newOrder');
     final Order oldOrder = orders[index];
     int oldOrderQuantity = oldOrder.qty;
     if (oldOrderQuantity > 1) {
@@ -101,8 +104,10 @@ class CartSharedPreferences {
     } else {
       orders.removeAt(index); // Remove the order when quantity reaches zero
     }
-
-    _sharedPreferences.setString(_cartKey, jsonEncode(orders));
+    print('After modification:');
+    print('orders: $orders');
+    print('newOrder: $newOrder');
+    _sharedPreferences.setString(cartKey, jsonEncode(orders));
     _controller.add(orders.length);
     _subTotalController.add(subTotal);
     _surchargeController.add(surcharge);
@@ -126,7 +131,7 @@ class CartSharedPreferences {
   }
 
   List<Order> getCartItems() {
-    final res = _sharedPreferences.getString(_cartKey);
+    final res = _sharedPreferences.getString(cartKey);
     if (res == null || res.isEmpty) return List.empty();
     return List.from(jsonDecode(res)).map((e) => Order.fromJson(e)).toList();
   }

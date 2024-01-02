@@ -14,10 +14,10 @@ class Inventory {
   Order get order {
     return Order(
       itemName: name ?? '',
-      productId: DateTime.now().microsecondsSinceEpoch.toString(),
+      productId: id ?? 0,
       price: price ?? 0,
-      qty: 0,
-      orderId: id ?? 0,
+      qty: 1, //TODO:changed value from zero to one
+      orderId: DateTime.now().microsecondsSinceEpoch,
     );
   }
 

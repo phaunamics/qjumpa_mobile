@@ -1,13 +1,16 @@
 import 'package:badges/badges.dart' as badges;
 import 'package:flutter/material.dart';
+import 'package:qjumpa/injection.dart';
 import 'package:qjumpa/src/core/utils/constants.dart';
 import 'package:qjumpa/src/core/utils/hex_converter.dart';
-import 'package:qjumpa/src/presentation/shopping_cart/cart.dart';
+import 'package:qjumpa/src/presentation/shopping_cart/bloc/cart_bloc.dart';
+import 'package:qjumpa/src/presentation/shopping_cart/cart_view.dart';
 
 class CustomBadge extends StatelessWidget {
   final int badgeCount;
+  final cartbloc = sl.get<CartBloc>();
 
-  const CustomBadge({
+  CustomBadge({
     super.key,
     this.badgeCount = 0,
   });
@@ -42,7 +45,9 @@ class CustomBadge extends StatelessWidget {
         icon: const Icon(Icons.shopping_cart_outlined),
         iconSize: 25,
         color: HexColor(primaryColor),
-        onPressed: () => Navigator.pushNamed(context, Cart.routeName),
+        onPressed: () {
+          Navigator.pushNamed(context, CartView.routeName);
+        },
       ),
     );
   }

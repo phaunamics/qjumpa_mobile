@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:qjumpa/injection.dart';
+import 'package:qjumpa/src/core/services/user_auth_service.dart';
 import 'package:qjumpa/src/core/utils/constants.dart';
-import 'package:qjumpa/src/core/services/firebase_auth.dart';
 import 'package:qjumpa/src/core/utils/hex_converter.dart';
 import 'package:qjumpa/src/presentation/login/login_view.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileScreen extends StatefulWidget {
   static const routeName = '/profile';
@@ -14,7 +15,8 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  final _auth = sl.get<Auth>();
+  final _prefs = sl.get<SharedPreferences>();
+  final userAuthService = sl.get<UserAuthService>();
 
   Future<void> signOut() async {
     showDialog(
@@ -23,13 +25,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
         builder: (context) {
           return const Text('Are you Sure?');
         });
-    await _auth.signOut();
+    await userAuthService.logout();
   }
 
   @override
   Widget build(BuildContext context) {
     var screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Stack(
         children: [
           Positioned(
@@ -72,7 +75,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       height: screenHeight / 37,
                     ),
                     customText(
-                        text: '@${_auth.currentUser?.email?.split('@')[0]}'),
+                        text: '@${_prefs.getString(userEmail)?.split('@')[0]}'),
                     SizedBox(
                       height: screenHeight / 23,
                     ),
@@ -94,13 +97,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     SizedBox(
                       height: screenHeight / 37,
                     ),
-                    customText(text: 'Contact Us'),
+                    GestureDetector(
+                        onTap: null, child: customText(text: 'Contact Us')),
                     SizedBox(
                       height: screenHeight / 43,
                     ),
                     GestureDetector(
                         onTap: () {
-                          _auth.signOut();
+                          signOut();
                           Navigator.pushReplacementNamed(
                               context, LoginView.routeName);
                         },

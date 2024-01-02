@@ -6,6 +6,7 @@ import 'package:qjumpa/src/presentation/select_store/select_store_screen.dart';
 import 'package:qjumpa/src/presentation/shopping_list/shopping_list_screen.dart';
 
 class ShoppingListNavBar extends StatefulWidget {
+  static const routeName = '/shoppingListNavBar';
   const ShoppingListNavBar({
     Key? key,
   }) : super(key: key);
@@ -44,11 +45,12 @@ class _ShoppingListNavBarState extends State<ShoppingListNavBar> {
         backgroundColor: HexColor(primaryColor),
         items: [
           BottomNavigationBarItem(
-              icon: SvgPicture.asset(
-                'assets/shop_icon.svg',
-              ),
-              label: 'Shop',
-              activeIcon: SvgPicture.asset('assets/shop_selected.svg'),),
+            icon: SvgPicture.asset(
+              'assets/shop_icon.svg',
+            ),
+            label: 'Shop',
+            activeIcon: SvgPicture.asset('assets/shop_selected.svg'),
+          ),
           BottomNavigationBarItem(
               icon: SvgPicture.asset('assets/shopping_list_icon.svg'),
               activeIcon: SvgPicture.asset('assets/shopping_list_selected.svg'),
