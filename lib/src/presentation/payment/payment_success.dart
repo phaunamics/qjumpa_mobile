@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gif/flutter_gif.dart';
 import 'package:qjumpa/src/core/utils/constants.dart';
 import 'package:qjumpa/src/core/utils/hex_converter.dart';
 import 'package:qjumpa/src/presentation/select_store/select_store_screen.dart';
@@ -16,17 +15,17 @@ class PaymentSuccess extends StatefulWidget {
 
 class _PaymentSuccessState extends State<PaymentSuccess>
     with TickerProviderStateMixin {
-  late FlutterGifController controller1;
+  // late FlutterGifController controller1;
   @override
-  void initState() {
-    controller1 = FlutterGifController(
-      vsync: this,
-    );
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      controller1.animateTo(25, duration: const Duration(milliseconds: 100));
-    });
-    super.initState();
-  }
+  // void initState() {
+  //   controller1 = FlutterGifController(
+  //     vsync: this,
+  //   );
+  //   WidgetsBinding.instance.addPostFrameCallback((_) {
+  //     controller1.animateTo(25, duration: const Duration(milliseconds: 100));
+  //   });
+  //   super.initState();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -41,11 +40,14 @@ class _PaymentSuccessState extends State<PaymentSuccess>
                   : SizedBox(
                       height: 250,
                       width: 260,
-                      child: GifImage(
-                        controller: controller1,
-                        image: const AssetImage("assets/payment_success.gif"),
+                      child: Container(
+                        color: Colors.green,
+                      )
+                      // GifImage(
+                      //   controller: controller1,
+                      //   image: const AssetImage("assets/payment_success.gif"),
+                      // ),
                       ),
-                    ),
               SizedBox(height: MediaQuery.of(context).size.height * 0.08),
               Text(
                 !widget.isSuccesful

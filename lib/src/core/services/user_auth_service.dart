@@ -21,9 +21,9 @@ class UserAuthService {
       InterceptorsWrapper(
         onRequest: (options, handler) async {
           // Attempt to retrieve the authentication token from shared preferences
-          SharedPreferences pref = await sl.getAsync<SharedPreferences>();
+          SharedPreferences _prefs = await sl.getAsync<SharedPreferences>();
 
-          final authToken = pref.getString(authTokenKey);
+          final authToken = _prefs.getString(authTokenKey);
 
           // Include the authentication token in the request headers if available
           if (authToken != null) {
@@ -54,10 +54,10 @@ class UserAuthService {
           var id = json['data']['customer']['id'];
           var token = json['data']['token'];
           var email = json['data']['customer']['email'];
-          SharedPreferences pref = await sl.getAsync<SharedPreferences>();
-          await pref.setString(authTokenKey, token);
-          await pref.setString(userEmail, email);
-          await pref.setInt(userId, id);
+          SharedPreferences _prefs = await sl.getAsync<SharedPreferences>();
+          await _prefs.setString(authTokenKey, token);
+          await _prefs.setString(userEmail, email);
+          await _prefs.setInt(userId, id);
         }
         return 'Login Successful';
       } else if (response.statusCode == 503) {
@@ -103,10 +103,10 @@ class UserAuthService {
           var id = json['data']['customer']['id'];
           var token = json['data']['token'];
           var email = json['data']['customer']['email'];
-          SharedPreferences pref = await sl.getAsync<SharedPreferences>();
-          await pref.setString(authTokenKey, token);
-          await pref.setString(userEmail, email);
-          await pref.setInt(userId, id);
+          SharedPreferences _prefs = await sl.getAsync<SharedPreferences>();
+          await _prefs.setString(authTokenKey, token);
+          await _prefs.setString(userEmail, email);
+          await _prefs.setInt(userId, id);
         }
         return 'Registration Successful';
       } else if (response.statusCode == 503) {
@@ -202,7 +202,7 @@ class UserAuthService {
   }
 
   Future<void> logout() async {
-    SharedPreferences pref = await sl.getAsync<SharedPreferences>();
-    await pref.clear();
+    SharedPreferences _prefs = await sl.getAsync<SharedPreferences>();
+    await _prefs.clear();
   }
 }

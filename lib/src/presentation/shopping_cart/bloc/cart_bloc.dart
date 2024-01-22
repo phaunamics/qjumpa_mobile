@@ -22,7 +22,6 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       try {
         final shoppingCart =
             await getShoppingCartUsecase.call(event.userId.toString());
-        print(shoppingCart!.data.toString());
         emit(GetShoppingCartCompleted(shoppingCart));
       } on SocketException catch (e) {
         // TODO: Handle SocketException

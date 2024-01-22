@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:qjumpa/injection.dart';
 import 'package:qjumpa/src/core/utils/constants.dart';
 import 'package:qjumpa/src/core/utils/hex_converter.dart';
+import 'package:qjumpa/src/core/utils/validation_utils.dart';
 import 'package:qjumpa/src/presentation/login/login_view.dart';
 import 'package:qjumpa/src/presentation/register_user/bloc/register_user_bloc.dart';
 import 'package:qjumpa/src/presentation/widgets/custom_textformfield.dart';
@@ -28,33 +29,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _phoneNumberController = TextEditingController();
   final _passwordController = TextEditingController();
 
-  String? _phoneNumberValidator(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Please enter your phone number';
-    }
-    if (!RegExp(r'^(?:\+234|0)[789][01]\d{8}$').hasMatch(value)) {
-      return 'Please enter a valid phone number';
-    }
-    return null;
-  }
-
-  String? _emailValidator(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Please enter your email';
-    }
-    if (!RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$')
-        .hasMatch(value)) {
-      return 'Please enter a valid email';
-    }
-    return null;
-  }
-
-  String? _passwordValidator(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Please enter your password';
-    }
-    return null;
-  }
 
   @override
   void initState() {
@@ -122,14 +96,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ],
               );
             }
-            return registerScreenView(screenHeight, context);
+            return _registerScreenView(screenHeight, context);
           },
         ),
       ),
     );
   }
 
-  Widget registerScreenView(double screenHeight, BuildContext context) {
+  Widget _registerScreenView(double screenHeight, BuildContext context) {
     return Stack(
       children: [
         Positioned(
@@ -161,7 +135,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           CustomTextFormField(
                             controller: _emailController,
                             hint: 'abc@gmail.com',
-                            validator: _emailValidator,
+                            validator: ValidationUtils.isValidEmail,
                             label: 'E-MAIL',
                             value: false,
                             focus: false,
@@ -173,7 +147,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           CustomTextFormField(
                             controller: _phoneNumberController,
                             hint: '1234567890',
-                            validator: _phoneNumberValidator,
+                            validator: ValidationUtils.isPhoneNumberValid,
                             label: 'PHONE NUMBER',
                             value: false,
                             focus: false,
@@ -186,7 +160,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             controller: _passwordController,
                             hint: 'password',
                             label: 'PASSWORD',
-                            validator: _passwordValidator,
+                            validator: ValidationUtils.isValidPassword,
                             value: passwordVisible,
                             focus: false,
                             suffixIcon: IconButton(

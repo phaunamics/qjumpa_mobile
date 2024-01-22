@@ -11,7 +11,6 @@ import 'package:qjumpa/src/core/services/user_auth_service.dart';
 import 'package:qjumpa/src/core/utils/constants.dart';
 import 'package:qjumpa/src/core/utils/hex_converter.dart';
 import 'package:qjumpa/src/core/utils/usecase.dart';
-import 'package:qjumpa/src/data/local_storage/cart_shared_preferences.dart';
 import 'package:qjumpa/src/domain/entity/exception.dart';
 import 'package:qjumpa/src/domain/entity/order_entity.dart';
 import 'package:qjumpa/src/domain/entity/shopping_cart_entity.dart';
@@ -40,13 +39,11 @@ class _SelectStoreScreenState extends State<SelectStoreScreen> {
   StoreEntity? _dropdownValue;
   final getBarcodeScannerbloc = sl.get<BarcodeScannerBloc>();
   final getstore = sl.get<GetStoreUseCase>();
-  final _cartSharedPref = sl.get<CartSharedPreferences>();
   final getShoppingCartUsecase = sl.get<GetShoppingCartUseCase>();
   final _prefs = sl.get<SharedPreferences>();
   int initialCartLength = 0;
   late StreamController<int> _cartLengthController;
 
-  bool _isInitializingCartLength = true;
 
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
@@ -120,12 +117,10 @@ class _SelectStoreScreenState extends State<SelectStoreScreen> {
       int length = await _fetchCartLength();
       setState(() {
         initialCartLength = length;
-        _isInitializingCartLength = false;
       });
       _cartLengthController.sink
           .add(initialCartLength); // Add the length to your stream
     } catch (error) {
-      print('Error initializing cart length: $error');
       // Handle error as per your requirements
     }
   }
@@ -479,10 +474,10 @@ class _SelectStoreScreenState extends State<SelectStoreScreen> {
                   color: HexColor(primaryColor),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 8.0),
+                child: const Padding(
+                  padding: EdgeInsets.only(left: 8.0),
                   child: Row(
-                    children: const [
+                    children: [
                       Icon(
                         Icons.search_rounded,
                         size: 24,

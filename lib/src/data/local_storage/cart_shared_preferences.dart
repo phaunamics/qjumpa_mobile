@@ -93,9 +93,6 @@ class CartSharedPreferences {
     var orders = List.from(getCartItems());
     final int index =
         orders.indexWhere((order) => order.orderId == newOrder.orderId);
-    print('Before modification:');
-    print('orders: $orders');
-    print('newOrder: $newOrder');
     final Order oldOrder = orders[index];
     int oldOrderQuantity = oldOrder.qty;
     if (oldOrderQuantity > 1) {
@@ -104,9 +101,6 @@ class CartSharedPreferences {
     } else {
       orders.removeAt(index); // Remove the order when quantity reaches zero
     }
-    print('After modification:');
-    print('orders: $orders');
-    print('newOrder: $newOrder');
     _sharedPreferences.setString(cartKey, jsonEncode(orders));
     _controller.add(orders.length);
     _subTotalController.add(subTotal);

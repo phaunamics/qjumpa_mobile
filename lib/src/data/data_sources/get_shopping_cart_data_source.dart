@@ -17,9 +17,6 @@ class GetShoppingCartRemoteDataSourceImpl
     try {
       final response = await userAuthService
           .getShoppingCart(getShoppingCartEndPiont(userId));
-      if (response == null) {
-        return null; // Return null if response is null
-      }
       final ShoppingCartEntity shoppingCart =
           ShoppingCartEntity.fromJson(response);
       return shoppingCart;
