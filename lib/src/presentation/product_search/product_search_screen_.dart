@@ -60,7 +60,6 @@ class _ProductSearchScreenState extends State<ProductSearchScreen> {
 
   void _performPlatformSpecificBarcodeScan() {
     if (Platform.isAndroid) {
-      print(widget.storeEntity!.id.toString());
       getBarcodeScannerbloc.add(Scan(widget.storeEntity!.id.toString()));
     } else if (Platform.isIOS) {
       Navigator.pushNamed(context, IOSScannerView.routeName);
@@ -85,11 +84,9 @@ class _ProductSearchScreenState extends State<ProductSearchScreen> {
   Future<void> _updateCartLength() async {
     try {
       final cartLength = await _fetchCartLength();
-      // print("cart length is $cartLength");
       initialCartLength = cartLength;
       _cartLengthController.sink.add(initialCartLength);
     } catch (error) {
-      // print('Error fetching initial cart length: $error');
       _cartLengthController.sink.add(
           initialCartLength); // Fallback to 0 or handle the error as required
     }
@@ -105,8 +102,7 @@ class _ProductSearchScreenState extends State<ProductSearchScreen> {
       _cartLengthController.sink
           .add(initialCartLength); // Add the length to your stream
     } catch (error) {
-      print('Error initializing cart length: $error');
-      // Handle error as per your requirements
+      debugPrintStack();
     }
   }
 
@@ -137,16 +133,14 @@ class _ProductSearchScreenState extends State<ProductSearchScreen> {
               ),
             ),
           )
-        : MultiBlocListener(
-            listeners: [
-                BlocListener<BarcodeScannerBloc, BarcodescannerState>(
-                  bloc: getBarcodeScannerbloc,
-                  listener: (context, state) {
+        : BlocListener(
+          bloc: getBarcodeScannerbloc,
+            listener: (context, state) {
                     if (state is BarcodescannerCompleted) {
                       showModalBottomSheet(
                           context: context,
                           builder: (context) {
-                            return productScanView(
+                            return _productScanView(
                                 screenHeight: screenHeight / 100,
                                 context: context,
                                 screenWidth: screenWidth,
@@ -155,8 +149,7 @@ class _ProductSearchScreenState extends State<ProductSearchScreen> {
                           });
                     }
                   },
-                ),
-              ],
+                
             child: Scaffold(
               backgroundColor: Colors.white,
               body: BlocBuilder<ProductSearchBloc, ProductSearchState>(
@@ -389,7 +382,7 @@ class _ProductSearchScreenState extends State<ProductSearchScreen> {
     );
   }
 
-  Widget productScanView(
+  Widget _productScanView(
       {required double screenHeight,
       required BuildContext context,
       required double screenWidth,

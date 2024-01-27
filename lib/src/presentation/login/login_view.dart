@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:qjumpa/injection.dart';
 import 'package:qjumpa/src/core/utils/constants.dart';
 import 'package:qjumpa/src/core/utils/hex_converter.dart';
+import 'package:qjumpa/src/core/utils/validation_utils.dart';
 import 'package:qjumpa/src/presentation/login/bloc/login_user_bloc.dart';
 import 'package:qjumpa/src/presentation/register_user/register_screen.dart';
 import 'package:qjumpa/src/presentation/select_store/select_store_screen.dart';
@@ -29,23 +30,6 @@ class _LoginViewState extends State<LoginView> {
   final _phoneNumberController = TextEditingController();
   final _passwordController = TextEditingController();
 
-  String? _phoneNumberValidator(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Please enter your phone number';
-    }
-    if (!RegExp(r'^(?:\+234|0)[789][01]\d{8}$').hasMatch(value)) {
-      return 'Please enter a valid phone number';
-    }
-    return null;
-  }
-
-  String? _passwordValidator(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Please enter your password';
-    }
-    return null;
-  }
-
   @override
   void initState() {
     super.initState();
@@ -62,7 +46,7 @@ class _LoginViewState extends State<LoginView> {
   @override
   Widget build(BuildContext context) {
     var screenHeight = MediaQuery.of(context).size.height;
-    return BlocListener<LoginUserBloc, LoginUserState>(
+    return BlocConsumer(
       bloc: loginUserBloc,
       listener: (context, state) {
         if (state is LoginUserCompleted) {
@@ -81,42 +65,91 @@ class _LoginViewState extends State<LoginView> {
           );
         }
       },
-      child: Scaffold(
-          body: BlocBuilder<LoginUserBloc, LoginUserState>(
-        bloc: loginUserBloc,
-        builder: (context, state) {
-          if (state is LoginUserLoading) {
-            return Stack(
-              children: [
-                Positioned(
-                  top: screenHeight / 2.8,
-                  left: screenHeight / 6,
-                  child: Center(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text('Welcome..'),
-                        SizedBox(
-                          height: screenHeight / 23,
-                        ),
-                        CircularProgressIndicator.adaptive(
-                          backgroundColor: HexColor(primaryColor),
-                        ),
-                      ],
-                    ),
+      builder: ((context, state) {
+        if (state is LoginUserLoading) {
+          return Stack(
+            children: [
+              Positioned(
+                top: screenHeight / 2.8,
+                left: screenHeight / 6,
+                child: Center(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text('Welcome..'),
+                      SizedBox(
+                        height: screenHeight / 23,
+                      ),
+                      CircularProgressIndicator.adaptive(
+                        backgroundColor: HexColor(primaryColor),
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            );
-          }
-          return loginScreenView(screenHeight, context);
-        },
-      )),
+              ),
+            ],
+          );
+        }
+
+        return _loginScreenView(screenHeight, context);
+      }),
     );
+    // return BlocListener<LoginUserBloc, LoginUserState>(
+    //   bloc: loginUserBloc,
+    //   listener: (context, state) {
+    //     if (state is LoginUserCompleted) {
+    //       Navigator.pushReplacementNamed(context, SelectStoreScreen.routeName);
+    //     } else if (state is ErrorState) {
+    //       ScaffoldMessenger.of(context).showSnackBar(
+    //         SnackBar(
+    //           content: Center(
+    //               child: Text(
+    //             state.messsge,
+    //             style: const TextStyle(color: Colors.red),
+    //           )),
+    //           duration: const Duration(seconds: 2),
+    //           backgroundColor: Colors.white,
+    //         ),
+    //       );
+    //     }
+    //   },
+    //   child: Scaffold(
+    //       body: BlocBuilder<LoginUserBloc, LoginUserState>(
+    //     bloc: loginUserBloc,
+    //     builder: (context, state) {
+    //       if (state is LoginUserLoading) {
+    //         return Stack(
+    //           children: [
+    //             Positioned(
+    //               top: screenHeight / 2.8,
+    //               left: screenHeight / 6,
+    //               child: Center(
+    //                 child: Column(
+    //                   crossAxisAlignment: CrossAxisAlignment.center,
+    //                   mainAxisAlignment: MainAxisAlignment.center,
+    //                   children: [
+    //                     const Text('Welcome..'),
+    //                     SizedBox(
+    //                       height: screenHeight / 23,
+    //                     ),
+    //                     CircularProgressIndicator.adaptive(
+    //                       backgroundColor: HexColor(primaryColor),
+    //                     ),
+    //                   ],
+    //                 ),
+    //               ),
+    //             ),
+    //           ],
+    //         );
+    //       }
+    //       return loginScreenView(screenHeight, context);
+    //     },
+    //   )),
+    // );
   }
 
-  Stack loginScreenView(double screenHeight, BuildContext context) {
+  Widget _loginScreenView(double screenHeight, BuildContext context) {
     return Stack(children: [
       Positioned(
         top: screenHeight <= 667 ? screenHeight / 34 : screenHeight / 15,
@@ -145,7 +178,7 @@ class _LoginViewState extends State<LoginView> {
                     child: Column(
                       children: [
                         CustomTextFormField(
-                          validator: _phoneNumberValidator,
+                          validator: ValidationUtils.isPhoneNumberValid,
                           controller: _phoneNumberController,
                           hint: '123456789',
                           label: 'PHONE NUMBER',
@@ -158,7 +191,7 @@ class _LoginViewState extends State<LoginView> {
                           height: screenHeight / 26,
                         ),
                         CustomTextFormField(
-                          validator: _passwordValidator,
+                          validator: ValidationUtils.isValidPassword,
                           controller: _passwordController,
                           hint: 'password',
                           label: 'PASSWORD',
@@ -184,7 +217,7 @@ class _LoginViewState extends State<LoginView> {
                   ),
                 ),
                 GestureDetector(
-                  onTap: () => {}
+                  onTap: (){}
                   // Navigator.pushReplacementNamed(
                   //     context, UpdatePasswordScreen.routeName)
                   ,

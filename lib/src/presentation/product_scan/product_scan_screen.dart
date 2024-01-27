@@ -7,7 +7,6 @@ import 'package:qjumpa/injection.dart';
 import 'package:qjumpa/src/core/services/user_auth_service.dart';
 import 'package:qjumpa/src/core/utils/constants.dart';
 import 'package:qjumpa/src/core/utils/hex_converter.dart';
-import 'package:qjumpa/src/data/local_storage/cart_shared_preferences.dart';
 import 'package:qjumpa/src/domain/entity/arguments.dart';
 import 'package:qjumpa/src/domain/entity/order_entity.dart';
 import 'package:qjumpa/src/domain/entity/shopping_cart_entity.dart';
@@ -86,7 +85,6 @@ class _ProductScanScreenState extends State<ProductScanScreen> {
       _cartLengthController.sink
           .add(initialCartLength); // Add the length to your stream
     } catch (error) {
-      print('Error initializing cart length: $error');
       // Handle error as per your requirements
     }
   }
